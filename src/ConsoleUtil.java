@@ -23,6 +23,9 @@ public class ConsoleUtil {
         System.out.println("1 - Загрузить задачи");
         System.out.println("2 - Показать все задачи");
         System.out.println("3 - Изменить статусы задач");
+        System.out.println("4 - Удалить задачи");
+        System.out.println("5 - Удалить эпики");
+        System.out.println("6 - Удалить подзадачи");
 
         System.out.println("0 - Выход из приложения");
 

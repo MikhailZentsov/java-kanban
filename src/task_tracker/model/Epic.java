@@ -22,11 +22,15 @@ public class Epic extends Task {
         return subtasksId;
     }
 
-    public void addSubtasks(Integer subtaskId) {
+    public void addSubtask(Integer subtaskId) {
         if (this.subtasksId.contains(subtaskId))
             System.out.println("Подзачада с ID " + subtaskId + " уже добавлена к эпику.");
         else
             this.subtasksId.add(subtaskId);
+    }
+
+    public void removeSubtask(Integer id) {
+        this.subtasksId.remove(id);
     }
 
     public void setStatus(@NotNull List<Status> list) {
@@ -39,12 +43,12 @@ public class Epic extends Task {
                 if (isAllDone && (item == Status.NEW || item == Status.IN_PROGRESS)) isAllDone = false;
                 if (isAllNew && (item == Status.DONE || item == Status.IN_PROGRESS)) isAllNew = false;
             }
+
+            if (isAllNew) status = Status.NEW;
+            if (isAllDone) status = Status.DONE;
         } else {
             status = Status.NEW;
         }
-
-        if (isAllNew) status = Status.NEW;
-        if (isAllDone) status = Status.DONE;
 
         this.setStatus(status);
     }

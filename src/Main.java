@@ -26,6 +26,18 @@ public class Main {
                     ConsoleUtil.changeStatus(taskManager);
                     break;
 
+                case (4):
+                    taskManager.clearTasks();
+                    break;
+
+                case (5):
+                    taskManager.clearEpics();
+                    break;
+
+                case (6):
+                    taskManager.clearSubtasks();
+                    break;
+
                 default:
                     System.out.println("Такой команды не существует.");
             }
