@@ -111,14 +111,14 @@ public class ConsoleUtil {
     public static void changeStatus(TaskManager taskManager) {
         taskManager.showAllTasks();
         taskManager.getSubtaskById(2).setStatus(Status.IN_PROGRESS);
-        taskManager.renewSubtask(taskManager.getSubtaskById(2));
+        taskManager.updateSubtask(taskManager.getSubtaskById(2));
         taskManager.showAllTasks();
         taskManager.getSubtaskById(2).setStatus(Status.DONE);
         taskManager.getSubtaskById(3).setStatus(Status.DONE);
         taskManager.getSubtaskById(4).setStatus(Status.DONE);
-        taskManager.renewSubtask(taskManager.getSubtaskById(2));
-        taskManager.renewSubtask(taskManager.getSubtaskById(3));
-        taskManager.renewSubtask(taskManager.getSubtaskById(4));
+        taskManager.updateSubtask(taskManager.getSubtaskById(2));
+        taskManager.updateSubtask(taskManager.getSubtaskById(3));
+        taskManager.updateSubtask(taskManager.getSubtaskById(4));
         taskManager.showAllTasks();
     }
 }

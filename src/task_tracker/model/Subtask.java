@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private final Integer parentEpicId;
+    private Integer parentEpicId;
 
     public Subtask(String name, String description, Integer id, Status status, Integer parentEpicId) {
         super(name, description, id, status);
@@ -19,6 +19,10 @@ public class Subtask extends Task {
 
     public Integer getParentEpicId() {
         return parentEpicId;
+    }
+
+    public void setParentEpicId(int parentEpicId) {
+        this.parentEpicId = parentEpicId;
     }
 
     @Override
