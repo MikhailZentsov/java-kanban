@@ -187,7 +187,7 @@ public class TaskManager {
     }
 
     public void deleteEpicById(Integer id) {
-        for (Integer key : epics.get(id).getSubtasks().keySet()) {
+        for (Integer key : epics.get(id).getSubtasks()) {
             subtasks.remove(key);
         }
         epics.remove(id);
@@ -200,7 +200,7 @@ public class TaskManager {
     public List<Subtask> getSubtasksByEpic(@NotNull Epic epic) {
         List<Subtask> list = new ArrayList<>();
 
-        for (Integer key : epic.getSubtasks().keySet()) {
+        for (Integer key : epic.getSubtasks()) {
             list.add(subtasks.get(key));
         }
 

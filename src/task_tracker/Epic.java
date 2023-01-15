@@ -5,11 +5,11 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 class Epic extends Task {
-    private final Map<Integer, Integer> subtasksId;
+    private final List<Integer> subtasksId;
 
     protected Epic(String name, String description, Integer id, Status status) {
         super(name, description, id, status);
-        this.subtasksId = new HashMap<>();
+        this.subtasksId = new ArrayList<>();
     }
 
     protected Epic(@NotNull Epic epic) {
@@ -18,15 +18,15 @@ class Epic extends Task {
         this.subtasksId = epic.getSubtasks();
     }
 
-    protected Map<Integer, Integer> getSubtasks() {
+    protected List<Integer> getSubtasks() {
         return subtasksId;
     }
 
     protected void addSubtasks(Integer subtaskId) {
-        if (this.subtasksId.containsKey(subtaskId))
+        if (this.subtasksId.contains(subtaskId))
             System.out.println("Подзачада с ID " + subtaskId + " уже добавлена к эпику.");
         else
-            this.subtasksId.put(subtaskId, 0);
+            this.subtasksId.add(subtaskId);
     }
 
     protected void setStatus(@NotNull List<Status> list) {
@@ -84,7 +84,7 @@ class Epic extends Task {
                 + ", subtasksID=";
 
         if (subtasksId != null) {
-            result += subtasksId.keySet().toString();
+            result += subtasksId.toString();
         }
 
         result += "}";
