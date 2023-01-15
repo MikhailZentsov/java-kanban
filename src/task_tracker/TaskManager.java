@@ -12,7 +12,7 @@ public class TaskManager {
     private final Map<Integer, Task> tasks;
     private final Map<Integer, Epic> epics;
     private final Map<Integer, Subtask> subtasks;
-    private Integer id;
+    private int id;
 
     public TaskManager() {
         this.epics = new HashMap<>();
