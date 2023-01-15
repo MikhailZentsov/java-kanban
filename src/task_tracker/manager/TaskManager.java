@@ -1,6 +1,7 @@
-package task_tracker;
+package task_tracker.manager;
 
 import org.jetbrains.annotations.NotNull;
+import task_tracker.model.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;

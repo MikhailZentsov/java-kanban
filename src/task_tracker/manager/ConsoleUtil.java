@@ -1,4 +1,4 @@
-package task_tracker;
+package task_tracker.manager;
 
 import java.io.IOException;
 import java.nio.file.Files;

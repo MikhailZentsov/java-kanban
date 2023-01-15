@@ -1,16 +1,16 @@
-package task_tracker;
+package task_tracker.model;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-class Task {
+public class Task {
     private final String name;
     private final String description;
     private final Integer id;
     private Status status;
 
-    protected Task(@NotNull Task task) {
+    public Task(@NotNull Task task) {
         this.name = task.getName();
         this.description = task.getDescription();
         this.id = task.getId();
@@ -32,15 +32,15 @@ class Task {
         return description;
     }
 
-    protected Integer getId() {
+    public Integer getId() {
         return id;
     }
 
-    protected Status getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    protected void setStatus(Status status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 

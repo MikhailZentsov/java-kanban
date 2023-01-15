@@ -1,23 +1,23 @@
-package task_tracker;
+package task_tracker.model;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Objects;
 
-class Subtask extends Task {
+public class Subtask extends Task {
     private final Integer parentEpicId;
 
-    protected Subtask(String name, String description, Integer id, Status status, Integer parentEpicId) {
+    public Subtask(String name, String description, Integer id, Status status, Integer parentEpicId) {
         super(name, description, id, status);
         this.parentEpicId = parentEpicId;
     }
 
-    protected Subtask(@NotNull Subtask subtask) {
+    public Subtask(@NotNull Subtask subtask) {
         super(subtask);
         this.parentEpicId = subtask.parentEpicId;
     }
 
-    protected Integer getParentEpicId() {
+    public Integer getParentEpicId() {
         return parentEpicId;
     }
 

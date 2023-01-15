@@ -1,35 +1,35 @@
-package task_tracker;
+package task_tracker.model;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
-class Epic extends Task {
+public class Epic extends Task {
     private final List<Integer> subtasksId;
 
-    protected Epic(String name, String description, Integer id, Status status) {
+    public Epic(String name, String description, Integer id, Status status) {
         super(name, description, id, status);
         this.subtasksId = new ArrayList<>();
     }
 
-    protected Epic(@NotNull Epic epic) {
+    public Epic(@NotNull Epic epic) {
         super(epic);
         this.setStatus(Status.NEW);
         this.subtasksId = epic.getSubtasks();
     }
 
-    protected List<Integer> getSubtasks() {
+    public List<Integer> getSubtasks() {
         return subtasksId;
     }
 
-    protected void addSubtasks(Integer subtaskId) {
+    public void addSubtasks(Integer subtaskId) {
         if (this.subtasksId.contains(subtaskId))
             System.out.println("Подзачада с ID " + subtaskId + " уже добавлена к эпику.");
         else
             this.subtasksId.add(subtaskId);
     }
 
-    protected void setStatus(@NotNull List<Status> list) {
+    public void setStatus(@NotNull List<Status> list) {
         Status status = Status.IN_PROGRESS;
         boolean isAllDone = true;
         boolean isAllNew = true;

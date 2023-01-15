@@ -1,9 +1,9 @@
-package task_tracker;
+package task_tracker.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
-enum Status {
+public enum Status {
 
     NEW,
     IN_PROGRESS,

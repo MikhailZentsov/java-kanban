@@ -1,6 +1,6 @@
-import task_tracker.TaskManager;
+import task_tracker.manager.TaskManager;
 
-import static task_tracker.ConsoleUtil.chooseMenu;
+import static task_tracker.manager.ConsoleUtil.chooseMenu;
 
 public class Main {
 
