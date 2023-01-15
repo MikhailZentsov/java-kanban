@@ -1,7 +1,5 @@
 import task_tracker.manager.TaskManager;
 
-import static task_tracker.manager.ConsoleUtil.chooseMenu;
-
 public class Main {
 
     public static void main(String[] args) {
@@ -11,13 +9,13 @@ public class Main {
 
         while (true) {
 
-            switch (chooseMenu()) {
+            switch (ConsoleUtil.chooseMenu()) {
                 case(0):
                     System.out.println("Программа завершила свою работу.");
                     return;
 
                 case (1):
-                    taskManager.loadTasks();
+                    ConsoleUtil.loadTasks(taskManager);
                     break;
 
                 case (2):
@@ -25,7 +23,7 @@ public class Main {
                     break;
 
                 case (3):
-                    taskManager.changeStatus();
+                    ConsoleUtil.changeStatus(taskManager);
                     break;
 
                 default:

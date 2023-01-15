@@ -22,89 +22,27 @@ public class TaskManager {
         id = 1;
     }
 
-    //  -- Будет удален
-    //  Метод для тестирования (Загрузка данных из файла)
-    //  Предполагается, что в файле все ID начинаются с 1 и без пропусков.
-    //  Преподалагается, что в файле все данные все коректные.
-    public void loadTasks() {
-        List<String> fileContents = ConsoleUtil.readFileContents();
+    public boolean isContainsId(int id) {
 
-        if (fileContents.isEmpty()) System.out.println("Пустой файл");
-        else {
-            for (String fileContent : fileContents) {
-                String[] recordContents = fileContent.split(",");
-
-                switch (recordContents[0]) {
-                    case "Epic":
-                        Integer idEpic = Integer.parseInt(recordContents[3]);
-
-                        if (epics.containsKey(idEpic))
-                            System.out.println("Задача с ID " + idEpic + "уже существует");
-                        else {
-                            epics.put(id, new Epic(recordContents[1]
-                                    , recordContents[2]
-                                    , idEpic
-                                    , Status.getStatusByName(recordContents[4])));
-                            id++;
-                        }
-
-                        break;
-
-                    case "Subtask":
-                        Integer idSubtask = Integer.parseInt(recordContents[3]);
-                        Integer idParentEpic = Integer.parseInt(recordContents[5]);
-
-                        if (subtasks.containsKey(idSubtask))
-                            System.out.println("Задача с ID " + idSubtask + "уже существует");
-                        else {
-                            subtasks.put(id, new Subtask(recordContents[1]
-                                    , recordContents[2]
-                                    , idSubtask
-                                    , Status.getStatusByName(recordContents[4])
-                                    , idParentEpic));
-                            epics.get(idParentEpic).addSubtasks(idSubtask);
-                            id++;
-                        }
-
-                        break;
-
-                    case "Task":
-                        Integer idTask = Integer.parseInt(recordContents[3]);
-
-                        if (tasks.containsKey(idTask))
-                            System.out.println("Задача с ID " + idTask + "уже существует");
-                        else {
-                            tasks.put(id, new Task(recordContents[1]
-                                    , recordContents[2]
-                                    , idTask
-                                    , Status.getStatusByName(recordContents[4])));
-                            id++;
-                        }
-
-                        break;
-
-                    default:
-                        System.out.println("Ошибка чтения строки: " + fileContent);
-                }
-            }
-        }
+        if (tasks.containsKey(id)) return true;
+        if (epics.containsKey(id)) return true;
+        return subtasks.containsKey(id);
     }
 
-    //  -- Будет удален
-    //  Метод для тестирования
-    //  Измененяет статусы задач
-    public void changeStatus() {
-        showAllTasks();
-        getSubtaskById(2).setStatus(Status.IN_PROGRESS);
-        renewSubtask(getSubtaskById(2));
-        showAllTasks();
-        getSubtaskById(2).setStatus(Status.DONE);
-        getSubtaskById(3).setStatus(Status.DONE);
-        getSubtaskById(4).setStatus(Status.DONE);
-        renewSubtask(getSubtaskById(2));
-        renewSubtask(getSubtaskById(3));
-        renewSubtask(getSubtaskById(4));
-        showAllTasks();
+    public void addTask(int idTask, Task task) {
+        tasks.put(idTask, task);
+        id++;
+    }
+
+    public void addEpic(int idEpic, Epic task) {
+        epics.put(idEpic, task);
+        id++;
+    }
+
+    public void addSubtask(int idSubtask, int idParent, Subtask task) {
+        subtasks.put(idSubtask, task);
+        epics.get(idParent).addSubtasks(idSubtask);
+        id++;
     }
 
     public void showAllTasks() {
