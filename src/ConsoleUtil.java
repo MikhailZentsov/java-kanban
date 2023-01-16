@@ -63,7 +63,7 @@ public class ConsoleUtil {
                         if (taskManager.isContainsId(idEpic))
                             System.out.println("Задача с ID " + idEpic + "уже существует");
                         else {
-                            taskManager.addEpic(idEpic, new Epic(recordContents[1]
+                            taskManager.addEpic(new Epic(recordContents[1]
                                     , recordContents[2]
                                     , idEpic
                                     , Status.getStatusByName(recordContents[4])));
@@ -78,7 +78,7 @@ public class ConsoleUtil {
                         if (taskManager.isContainsId(idSubtask))
                             System.out.println("Задача с ID " + idSubtask + "уже существует");
                         else {
-                            taskManager.addSubtask(idSubtask, idParentEpic, new Subtask(recordContents[1]
+                            taskManager.addSubtask(new Subtask(recordContents[1]
                                     , recordContents[2]
                                     , idSubtask
                                     , Status.getStatusByName(recordContents[4])
@@ -93,7 +93,7 @@ public class ConsoleUtil {
                         if (taskManager.isContainsId(idTask))
                             System.out.println("Задача с ID " + idTask + "уже существует");
                         else {
-                            taskManager.addTask(idTask, new Task(recordContents[1]
+                            taskManager.addTask(new Task(recordContents[1]
                                     , recordContents[2]
                                     , idTask
                                     , Status.getStatusByName(recordContents[4])));
@@ -109,16 +109,29 @@ public class ConsoleUtil {
     }
 
     public static void changeStatus(TaskManager taskManager) {
-        taskManager.showAllTasks();
+        showAllTasks(taskManager);
         taskManager.getSubtaskById(2).setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(taskManager.getSubtaskById(2));
-        taskManager.showAllTasks();
+        showAllTasks(taskManager);
         taskManager.getSubtaskById(2).setStatus(Status.DONE);
         taskManager.getSubtaskById(3).setStatus(Status.DONE);
         taskManager.getSubtaskById(4).setStatus(Status.DONE);
         taskManager.updateSubtask(taskManager.getSubtaskById(2));
         taskManager.updateSubtask(taskManager.getSubtaskById(3));
         taskManager.updateSubtask(taskManager.getSubtaskById(4));
-        taskManager.showAllTasks();
+        showAllTasks(taskManager);
+    }
+
+    public static void showAllTasks(TaskManager taskManager) {
+        for (Epic epic : taskManager.getEpics()) {
+            System.out.println(epic.toString());
+            for (Subtask task : taskManager.getSubtasksByEpic(epic)) {
+                System.out.println(task.toString());
+            }
+        }
+
+        for (Task task : taskManager.getTasks()) {
+            System.out.println(task.toString());
+        }
     }
 }

@@ -19,7 +19,7 @@ public class Main {
                     break;
 
                 case (2):
-                    taskManager.showAllTasks();
+                    ConsoleUtil.showAllTasks(taskManager);
                     break;
 
                 case (3):

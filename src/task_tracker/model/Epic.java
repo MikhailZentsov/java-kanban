@@ -33,6 +33,11 @@ public class Epic extends Task {
         this.subtasksId.remove(id);
     }
 
+    public void removeAllSubtasks() {
+        this.subtasksId.clear();
+        this.setStatus(Status.NEW);
+    }
+
     public void setStatus(@NotNull List<Status> list) {
         Status status = Status.IN_PROGRESS;
         boolean isAllDone = true;
