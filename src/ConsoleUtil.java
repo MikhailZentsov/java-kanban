@@ -26,6 +26,7 @@ public class ConsoleUtil {
         System.out.println("4 - Удалить задачи");
         System.out.println("5 - Удалить эпики");
         System.out.println("6 - Удалить подзадачи");
+        System.out.println("7 - Показать историю");
 
         System.out.println("0 - Выход из приложения");
 
@@ -131,6 +132,12 @@ public class ConsoleUtil {
         }
 
         for (Task task : taskManager.getTasks()) {
+            System.out.println(task.toString());
+        }
+    }
+
+    public static void showHistory(InMemoryTaskManager taskManager) {
+        for (Task task: taskManager.getHistory()) {
             System.out.println(task.toString());
         }
     }

@@ -38,6 +38,10 @@ public class Main {
                     taskManager.clearSubtasks();
                     break;
 
+                case (7):
+                    ConsoleUtil.showHistory(taskManager);
+                    break;
+
                 default:
                     System.out.println("Такой команды не существует.");
             }

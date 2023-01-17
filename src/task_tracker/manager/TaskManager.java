@@ -19,7 +19,7 @@ public interface TaskManager {
     void clearEpics();
     void clearSubtasks();
     Task getTaskById(int id);
-     Epic getEpicById(int id);
+    Epic getEpicById(int id);
     Subtask getSubtaskById(int id);
     int createTask(@NotNull Task task);
     int createEpic(@NotNull Epic epic);
@@ -30,5 +30,6 @@ public interface TaskManager {
     boolean deleteTaskById(int id);
     boolean deleteEpicById(int id);
     boolean deleteSubtaskById(int id);
-    List<Subtask> getSubtasksByEpic(@NotNull Epic epic);
+    public List<Subtask> getSubtasksByEpic(@NotNull Epic epic);
+    public List<Task> getHistory();
 }
