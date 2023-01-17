@@ -1,9 +1,11 @@
 import task_tracker.manager.InMemoryTaskManager;
+import task_tracker.manager.Managers;
 
 public class Main {
 
     public static void main(String[] args) {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
+        Managers managers = new Managers();
+        InMemoryTaskManager taskManager = (InMemoryTaskManager) managers.getDefault();
 
         System.out.println("Вас приветствует программа \"Трекер задач\"");
 
