@@ -1,4 +1,4 @@
-import task_tracker.manager.TaskManager;
+import task_tracker.manager.InMemoryTaskManager;
 import task_tracker.model.Epic;
 import task_tracker.model.Status;
 import task_tracker.model.Subtask;
@@ -48,7 +48,7 @@ public class ConsoleUtil {
         }
     }
 
-    public static void loadTasks(TaskManager taskManager) {
+    public static void loadTasks(InMemoryTaskManager taskManager) {
         List<String> fileContents = ConsoleUtil.readFileContents();
 
         if (fileContents.isEmpty()) System.out.println("Пустой файл");
@@ -108,7 +108,7 @@ public class ConsoleUtil {
         }
     }
 
-    public static void changeStatus(TaskManager taskManager) {
+    public static void changeStatus(InMemoryTaskManager taskManager) {
         showAllTasks(taskManager);
         taskManager.getSubtaskById(2).setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(taskManager.getSubtaskById(2));
@@ -122,7 +122,7 @@ public class ConsoleUtil {
         showAllTasks(taskManager);
     }
 
-    public static void showAllTasks(TaskManager taskManager) {
+    public static void showAllTasks(InMemoryTaskManager taskManager) {
         for (Epic epic : taskManager.getEpics()) {
             System.out.println(epic.toString());
             for (Subtask task : taskManager.getSubtasksByEpic(epic)) {
