@@ -26,8 +26,8 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean isContainsId(int id) {
-        if (tasks.containsKey(id)) return true;
-        if (epics.containsKey(id)) return true;
+        if (tasks.containsKey(id)) { return true; }
+        if (epics.containsKey(id)) { return true; }
         return subtasks.containsKey(id);
     }
 
@@ -196,19 +196,19 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean deleteEpicById(int id) {
-        boolean isGood = true;
+        boolean isDeleted = true;
 
         if (epics.containsKey(id)) {
             for (Integer key : epics.get(id).getSubtasks()) {
-                if (!(deleteSubtaskById(key) & isGood)) { isGood = false; }
+                if (!(deleteSubtaskById(key) & isDeleted)) { isDeleted = false; }
             }
 
             epics.remove(id);
         } else {
-            isGood = false;
+            isDeleted = false;
         }
 
-        return isGood;
+        return isDeleted;
     }
 
     @Override
