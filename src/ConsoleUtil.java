@@ -64,10 +64,10 @@ public class ConsoleUtil {
                         if (taskManager.isContainsId(idEpic))
                             System.out.println("Задача с ID " + idEpic + "уже существует");
                         else {
-                            taskManager.addEpic(new Epic(recordContents[1]
-                                    , recordContents[2]
-                                    , idEpic
-                                    , Status.getStatusByName(recordContents[4])));
+                            taskManager.addEpic(new Epic(recordContents[1],
+                                    recordContents[2],
+                                    idEpic,
+                                    Status.valueOf(recordContents[4])));
                         }
 
                         break;
@@ -79,11 +79,11 @@ public class ConsoleUtil {
                         if (taskManager.isContainsId(idSubtask))
                             System.out.println("Задача с ID " + idSubtask + "уже существует");
                         else {
-                            taskManager.addSubtask(new Subtask(recordContents[1]
-                                    , recordContents[2]
-                                    , idSubtask
-                                    , Status.getStatusByName(recordContents[4])
-                                    , idParentEpic));
+                            taskManager.addSubtask(new Subtask(recordContents[1],
+                                    recordContents[2],
+                                    idSubtask,
+                                    Status.valueOf(recordContents[4]),
+                                    idParentEpic));
                         }
 
                         break;
@@ -94,10 +94,10 @@ public class ConsoleUtil {
                         if (taskManager.isContainsId(idTask))
                             System.out.println("Задача с ID " + idTask + "уже существует");
                         else {
-                            taskManager.addTask(new Task(recordContents[1]
-                                    , recordContents[2]
-                                    , idTask
-                                    , Status.getStatusByName(recordContents[4])));
+                            taskManager.addTask(new Task(recordContents[1],
+                                    recordContents[2],
+                                    idTask,
+                                    Status.valueOf(recordContents[4])));
                         }
 
                         break;
