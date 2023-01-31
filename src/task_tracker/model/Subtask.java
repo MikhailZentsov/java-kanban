@@ -7,9 +7,9 @@ import java.util.Objects;
 public class Subtask extends Task {
     private Integer parentEpicId;
 
-    public Subtask(String name, String description, Integer id, Status status, Integer parentEpicId) {
-        super(name, description, id, status);
-        this.parentEpicId = parentEpicId;
+    public Subtask(String name, String description, @NotNull Epic parentEpic) {
+        super(name, description);
+        this.parentEpicId = parentEpic.getId();
     }
 
     public Subtask(@NotNull Subtask subtask) {
@@ -21,8 +21,8 @@ public class Subtask extends Task {
         return parentEpicId;
     }
 
-    public void setParentEpicId(int parentEpicId) {
-        this.parentEpicId = parentEpicId;
+    public void setParentEpic(@NotNull Epic epic) {
+        this.parentEpicId = epic.getId();
     }
 
     @Override

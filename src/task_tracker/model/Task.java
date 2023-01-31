@@ -17,11 +17,10 @@ public class Task {
         this.status = task.getStatus();
     }
 
-    public Task(String name, String description, Integer id, Status status) {
+    public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        this.id = id;
-        this.status = status;
+        this.status = Status.NEW;
     }
 
     public String getName() {

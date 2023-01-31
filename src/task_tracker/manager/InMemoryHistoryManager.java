@@ -1,25 +1,29 @@
 package task_tracker.manager;
 
+import task_tracker.model.CustomLinkedList;
 import task_tracker.model.Task;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class InMemoryHistoryManager implements HistoryManager {
-    private final List<Task> history;
+    private final CustomLinkedList<Task> history;
 
     InMemoryHistoryManager() {
-        this.history = new ArrayList<>();
+        this.history = new CustomLinkedList<>();
     }
 
     @Override
     public void add(Task task) {
-        if (history.size() == 10) { history.remove(0); }
-        if (!history.contains(task)) { history.add(task); }
+        history.add(task);
     }
 
     @Override
     public List<Task> getHistory() {
-        return history;
+        return history.getHistory();
+    }
+
+    @Override
+    public void remove(int id) {
+        history.remove(id);
     }
 }

@@ -44,6 +44,14 @@ public class Main {
                     ConsoleUtil.showHistory(taskManager);
                     break;
 
+                case (8):
+                    ConsoleUtil.showTask(taskManager);
+                    break;
+
+                case (9):
+                    ConsoleUtil.deleteTasks(taskManager);
+                    break;
+
                 default:
                     System.out.println("Такой команды не существует.");
             }

@@ -1,20 +1,15 @@
+import org.jetbrains.annotations.NotNull;
 import task_tracker.manager.InMemoryTaskManager;
 import task_tracker.model.Epic;
 import task_tracker.model.Status;
 import task_tracker.model.Subtask;
 import task_tracker.model.Task;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUtil {
-    private static final String path = "resources/DataLoad.csv";
+    private static final Scanner scanner = new Scanner(System.in);
     public static int chooseMenu() {
-        Scanner scanner = new Scanner(System.in);
 
         int userInput;
 
@@ -27,6 +22,8 @@ public class ConsoleUtil {
         System.out.println("5 - Удалить эпики");
         System.out.println("6 - Удалить подзадачи");
         System.out.println("7 - Показать историю");
+        System.out.println("8 - Показать задачу");
+        System.out.println("9 - Удалить задачу");
 
         System.out.println("0 - Выход из приложения");
 
@@ -40,95 +37,88 @@ public class ConsoleUtil {
         return userInput;
     }
 
-    public static List<String> readFileContents() {
+    public static void loadTasks(@NotNull InMemoryTaskManager taskManager) {
+        Epic epic1 = new Epic("Переезд", "Переезд в другую квартиру");
+        Epic epic2 = new Epic("Важный эпик 2", "Очень важный");
+        Epic epic3 = new Epic("Важный эпик 2", "Очень важный");
+        Epic epic4 = new Epic("Важный эпик 2", "Очень важный");
+
+        taskManager.addTask(new Task("Обычная задача","Простая задача"));
+        taskManager.addTask(new Task("Поесть","Не забыть поесть!"));
+        taskManager.addTask(new Task("Почитать перед сном","Почитать перед сном про Java"));
+
+        taskManager.addEpic(epic1);
+        taskManager.addEpic(epic2);
+        taskManager.addEpic(epic3);
+        taskManager.addEpic(epic4);
+
+        taskManager.addSubtask(new Subtask("Собрать коробки", "Собрать вещи в коробки", epic1));
+        taskManager.addSubtask(new Subtask("Упаковать кошку", "Упаковать кошку в переноску", epic1));
+        taskManager.addSubtask(new Subtask("Сказать слова прощания", "Добрые слова прощания", epic1));
+
+        taskManager.addSubtask(new Subtask("Задача 1", "", epic2));
+        taskManager.addSubtask(new Subtask("Задача 1", "", epic2));
+
+        taskManager.addSubtask(new Subtask("Задача 1", "", epic3));
+        taskManager.addSubtask(new Subtask("Задача 1", "", epic3));
+
+        System.out.println("Задачи загружены в систему.");
+    }
+
+    public static void changeStatus(@NotNull InMemoryTaskManager taskManager) {
+        int taskId = -1;
+        int userChoose = 0;
+        Status status;
+
+        showAllTasks(taskManager);
+        System.out.print("Введите ID изменяемой задачи: ");
+
         try {
-            return Files.readAllLines(Path.of(path));
-        } catch (IOException e) {
-            System.out.println("Невозможно прочитать файл с данными. Возможно файл не находится в нужной директории.");
-            return Collections.emptyList();
+            taskId = scanner.nextInt();
+        } catch (Exception e) {
+            System.out.println("Вы ввели не число.");
         }
-    }
 
-    public static void loadTasks(InMemoryTaskManager taskManager) {
-        List<String> fileContents = ConsoleUtil.readFileContents();
+        Task task = taskManager.getAnyTaskById(taskId);
 
-        if (fileContents.isEmpty()) System.out.println("Пустой файл");
-        else {
-            for (String fileContent : fileContents) {
-                String[] recordContents = fileContent.split(",");
-
-                switch (recordContents[0]) {
-                    case "Epic":
-                        int idEpic = Integer.parseInt(recordContents[3]);
-
-                        if (taskManager.isContainsId(idEpic))
-                            System.out.println("Задача с ID " + idEpic + "уже существует");
-                        else {
-                            taskManager.addEpic(new Epic(recordContents[1],
-                                    recordContents[2],
-                                    idEpic,
-                                    Status.valueOf(recordContents[4])));
-                        }
-
-                        break;
-
-                    case "Subtask":
-                        int idSubtask = Integer.parseInt(recordContents[3]);
-                        int idParentEpic = Integer.parseInt(recordContents[5]);
-
-                        if (taskManager.isContainsId(idSubtask))
-                            System.out.println("Задача с ID " + idSubtask + "уже существует");
-                        else {
-                            taskManager.addSubtask(new Subtask(recordContents[1],
-                                    recordContents[2],
-                                    idSubtask,
-                                    Status.valueOf(recordContents[4]),
-                                    idParentEpic));
-                        }
-
-                        break;
-
-                    case "Task":
-                        int idTask = Integer.parseInt(recordContents[3]);
-
-                        if (taskManager.isContainsId(idTask))
-                            System.out.println("Задача с ID " + idTask + "уже существует");
-                        else {
-                            taskManager.addTask(new Task(recordContents[1],
-                                    recordContents[2],
-                                    idTask,
-                                    Status.valueOf(recordContents[4])));
-                        }
-
-                        break;
-
-                    default:
-                        System.out.println("Ошибка чтения строки: " + fileContent);
-                }
-            }
+        if (task == null) {
+            System.out.println("Такой задачи не существует.");
+            return;
         }
+
+        System.out.println("Какой статус установить: 1 - NEW, 2 - IN_PROGRESS, 3 - DONE");
+
+        try {
+            userChoose = scanner.nextInt();
+        } catch (Exception e) {
+            System.out.println("Вы ввели не число.");
+        }
+
+        switch (userChoose) {
+            case 1:
+                status = Status.NEW;
+                break;
+            case 2:
+                status = Status.IN_PROGRESS;
+                break;
+            case 3:
+                status = Status.DONE;
+                break;
+            default:
+                System.out.println("Такого статуса нет.");
+                return;
+        }
+
+        task.setStatus(status);
     }
 
-    public static void changeStatus(InMemoryTaskManager taskManager) {
-        showAllTasks(taskManager);
-        taskManager.getSubtaskById(2).setStatus(Status.IN_PROGRESS);
-        taskManager.updateSubtask(taskManager.getSubtaskById(2));
-        showAllTasks(taskManager);
-        taskManager.getSubtaskById(2).setStatus(Status.DONE);
-        taskManager.getSubtaskById(3).setStatus(Status.DONE);
-        taskManager.getSubtaskById(4).setStatus(Status.DONE);
-        taskManager.updateSubtask(taskManager.getSubtaskById(2));
-        taskManager.updateSubtask(taskManager.getSubtaskById(3));
-        taskManager.updateSubtask(taskManager.getSubtaskById(4));
-        showAllTasks(taskManager);
-    }
-
-    public static void showAllTasks(InMemoryTaskManager taskManager) {
+    public static void showAllTasks(@NotNull InMemoryTaskManager taskManager) {
         for (Epic epic : taskManager.getEpics()) {
             System.out.println(epic.toString());
-            for (Subtask task : taskManager.getSubtasksByEpic(epic)) {
-                System.out.println(task.toString());
-            }
+        }
+
+        for (Subtask task : taskManager.getSubtasks()) {
+            System.out.println(task.toString());
         }
 
         for (Task task : taskManager.getTasks()) {
@@ -136,9 +126,49 @@ public class ConsoleUtil {
         }
     }
 
-    public static void showHistory(InMemoryTaskManager taskManager) {
+    public static void showHistory(@NotNull InMemoryTaskManager taskManager) {
         for (Task task: taskManager.getHistory()) {
             System.out.println(task.toString());
+        }
+    }
+
+    public static void showTask(InMemoryTaskManager taskManager) {
+        int taskId = -1;
+
+        System.out.print("Введите ID задачи: ");
+
+        try {
+            taskId = scanner.nextInt();
+        } catch (Exception e) {
+            System.out.println("Вы ввели не число.");
+        }
+
+        Task task = taskManager.getAnyTaskById(taskId);
+
+        if (task != null) {
+            System.out.println(task);
+        } else {
+            System.out.println("Задачи с таким ID нет.");
+        }
+    }
+
+    public static void deleteTasks(InMemoryTaskManager taskManager) {
+        int taskId = -1;
+
+        System.out.print("Введите ID задачи: ");
+
+        try {
+            taskId = scanner.nextInt();
+        } catch (Exception e) {
+            System.out.println("Вы ввели не число.");
+        }
+
+        if (taskManager.deleteTask(taskId) ||
+                taskManager.deleteSubtask(taskId) ||
+                taskManager.deleteEpic(taskId)) {
+            System.out.println("Задача удалена.");
+        } else {
+            System.out.println("Такой задачи нет.");
         }
     }
 }
