@@ -5,6 +5,7 @@ import task_tracker.model.Status;
 import task_tracker.model.Subtask;
 import task_tracker.model.Task;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUtil {
@@ -66,50 +67,12 @@ public class ConsoleUtil {
     }
 
     public static void changeStatus(@NotNull InMemoryTaskManager taskManager) {
-        int taskId = -1;
-        int userChoose = 0;
-        Status status;
-
-        showAllTasks(taskManager);
-        System.out.print("Введите ID изменяемой задачи: ");
-
-        try {
-            taskId = scanner.nextInt();
-        } catch (Exception e) {
-            System.out.println("Вы ввели не число.");
+        List<Subtask> subtasks = taskManager.getSubtasks();
+        for (Subtask subtask : subtasks) {
+            subtask.setStatus(Status.DONE);
+            taskManager.addSubtask(subtask);
+            taskManager.deleteSubtask(subtask.getId());
         }
-
-        Task task = taskManager.getAnyTaskById(taskId);
-
-        if (task == null) {
-            System.out.println("Такой задачи не существует.");
-            return;
-        }
-
-        System.out.println("Какой статус установить: 1 - NEW, 2 - IN_PROGRESS, 3 - DONE");
-
-        try {
-            userChoose = scanner.nextInt();
-        } catch (Exception e) {
-            System.out.println("Вы ввели не число.");
-        }
-
-        switch (userChoose) {
-            case 1:
-                status = Status.NEW;
-                break;
-            case 2:
-                status = Status.IN_PROGRESS;
-                break;
-            case 3:
-                status = Status.DONE;
-                break;
-            default:
-                System.out.println("Такого статуса нет.");
-                return;
-        }
-
-        task.setStatus(status);
     }
 
     public static void showAllTasks(@NotNull InMemoryTaskManager taskManager) {
