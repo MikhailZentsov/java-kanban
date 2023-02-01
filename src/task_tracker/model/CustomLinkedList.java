@@ -12,9 +12,9 @@ public class CustomLinkedList<T> {
         this.map = new HashMap<>();
     }
 
-    Node<T> linkLast(T t) {
+    Node<T> linkLast(T element) {
         final CustomLinkedList.Node<T> l = last;
-        final CustomLinkedList.Node<T> newNode = new CustomLinkedList.Node<>(l, t, null);
+        final CustomLinkedList.Node<T> newNode = new CustomLinkedList.Node<>(l, element, null);
         last = newNode;
 
         if (l == null) {
@@ -28,12 +28,12 @@ public class CustomLinkedList<T> {
         return newNode;
     }
 
-    public boolean add(T t) {
+    public boolean add(T element) {
         try {
-            var key = ((Task) t).getId();
+            var key = ((Task) element).getId();
 
             if (!map.containsKey(key)) {
-                map.put(key, linkLast(t));
+                map.put(key, linkLast(element));
 
                 return true;
             }
@@ -44,26 +44,26 @@ public class CustomLinkedList<T> {
         return false;
     }
 
-    T unlink(CustomLinkedList.Node<T> x) {
-        final T element = x.item;
-        final CustomLinkedList.Node<T> next = x.next;
-        final CustomLinkedList.Node<T> prev = x.prev;
+    T unlink(CustomLinkedList.Node<T> node) {
+        final T element = node.item;
+        final CustomLinkedList.Node<T> next = node.next;
+        final CustomLinkedList.Node<T> prev = node.prev;
 
         if (prev == null) {
             first = next;
         } else {
             prev.next = next;
-            x.prev = null;
+            node.prev = null;
         }
 
         if (next == null) {
             last = prev;
         } else {
             next.prev = prev;
-            x.next = null;
+            node.next = null;
         }
 
-        x.item = null;
+        node.item = null;
         size--;
 
         return element;

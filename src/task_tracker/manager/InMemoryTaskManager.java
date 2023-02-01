@@ -119,9 +119,9 @@ public class InMemoryTaskManager implements TaskManager {
             tasks.put(task.getId(), task);
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     @Override
@@ -133,9 +133,9 @@ public class InMemoryTaskManager implements TaskManager {
             updateTask.setDescription(task.getDescription());
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     @Override
@@ -145,9 +145,9 @@ public class InMemoryTaskManager implements TaskManager {
             setEpicStatusBySubtasks(epics.get(task.getParentEpicId()));
 
             return true;
-        } else {
-            return false;
         }
+
+        return false;
     }
 
     @Override
