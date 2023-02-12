@@ -6,7 +6,7 @@ public class CustomLinkedList<T> {
     transient int size = 0;
     transient CustomLinkedList.Node<T> first;
     transient CustomLinkedList.Node<T> last;
-    private final Map<Integer, Node<T>> map;
+    private final transient Map<Integer, Node<T>> map;
 
     public CustomLinkedList() {
         this.map = new HashMap<>();
@@ -32,16 +32,16 @@ public class CustomLinkedList<T> {
         try {
             var key = ((Task) element).getId();
 
-            if (!map.containsKey(key)) {
-                map.put(key, linkLast(element));
-
-                return true;
+            if (map.containsKey(key)) {
+                unlink(map.get(key));
             }
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
-        return false;
+            map.put(key, linkLast(element));
+
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
     }
 
     T unlink(CustomLinkedList.Node<T> node) {

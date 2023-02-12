@@ -16,7 +16,7 @@ public class ConsoleUtil {
 
         System.out.println();
         System.out.println("Выберите действие:");
-        System.out.println("1 - Загрузить задачи");
+        System.out.println("1 - Загрузить задачи и историю");
         System.out.println("2 - Показать все задачи");
         System.out.println("3 - Изменить статусы задач");
         System.out.println("4 - Удалить задачи");
@@ -25,6 +25,7 @@ public class ConsoleUtil {
         System.out.println("7 - Показать историю");
         System.out.println("8 - Показать задачу");
         System.out.println("9 - Удалить задачу");
+        System.out.println("10 - Сгененировать задачи");
 
         System.out.println("0 - Выход из приложения");
 
@@ -38,7 +39,7 @@ public class ConsoleUtil {
         return userInput;
     }
 
-    public static void loadTasks(@NotNull InMemoryTaskManager taskManager) {
+    public static void createTasks(@NotNull InMemoryTaskManager taskManager) {
         Epic epic1 = new Epic("Переезд", "Переезд в другую квартиру");
         Epic epic2 = new Epic("Важный эпик 2", "Очень важный");
         Epic epic3 = new Epic("Важный эпик 2", "Очень важный");
@@ -68,10 +69,11 @@ public class ConsoleUtil {
 
     public static void changeStatus(@NotNull InMemoryTaskManager taskManager) {
         List<Subtask> subtasks = taskManager.getSubtasks();
+
         for (Subtask subtask : subtasks) {
             subtask.setStatus(Status.DONE);
             taskManager.addSubtask(subtask);
-            taskManager.deleteSubtask(subtask.getId());
+            taskManager.deleteSubtask(subtask);
         }
     }
 
@@ -127,7 +129,7 @@ public class ConsoleUtil {
         }
 
         if (taskManager.deleteTask(taskId) ||
-                taskManager.deleteSubtask(taskId) ||
+                taskManager.deleteSubtask(taskManager.getSubtask(taskId)) ||
                 taskManager.deleteEpic(taskId)) {
             System.out.println("Задача удалена.");
         } else {

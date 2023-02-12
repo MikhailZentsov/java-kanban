@@ -11,7 +11,7 @@ public interface TaskManager {
     Task getAnyTaskById(int id);
     void addTask(@NotNull Task task);
     void addEpic(@NotNull Epic task);
-    boolean addSubtask(@NotNull Subtask task);
+    boolean addSubtask(Subtask task);
     List<Task> getTasks();
     List<Epic> getEpics();
     List<Subtask> getSubtasks();
@@ -26,7 +26,6 @@ public interface TaskManager {
     boolean updateSubtask(@NotNull Subtask task);
     boolean deleteTask(int id);
     boolean deleteEpic(int id);
-    boolean deleteSubtask(int id);
-    public List<Subtask> getSubtasksByEpic(@NotNull Epic epic);
-    public List<Task> getHistory();
+    boolean deleteSubtask(Subtask task);
+    List<Task> getHistory();
 }

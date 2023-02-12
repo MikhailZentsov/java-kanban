@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private Integer parentEpicId;
+    private final Integer parentEpicId;
 
     public Subtask(String name, String description, @NotNull Epic parentEpic) {
         super(name, description);
@@ -17,12 +17,13 @@ public class Subtask extends Task {
         this.parentEpicId = subtask.parentEpicId;
     }
 
-    public Integer getParentEpicId() {
-        return parentEpicId;
+    public Subtask(String name, String description, Integer id, Status status, Integer parentEpicId) {
+        super(name, description, id, status);
+        this.parentEpicId = parentEpicId;
     }
 
-    public void setParentEpic(@NotNull Epic epic) {
-        this.parentEpicId = epic.getId();
+    public Integer getParentEpicId() {
+        return parentEpicId;
     }
 
     @Override
@@ -31,6 +32,7 @@ public class Subtask extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Subtask subtask = (Subtask) o;
+
         return Objects.equals(parentEpicId, subtask.parentEpicId)
                 && ((Task) this).equals(o);
     }
@@ -52,12 +54,20 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Subtask{"
-                + "ID='" + getId() + '\''
-                + ", name='" + getName() + '\''
-                + ", description='" + getDescription() + '\''
-                + ", status='" + getStatus() + '\''
-                + ", parentEpicID=" + parentEpicId
-                + "}";
+
+        return super.toString().substring(0, super.toString().length() - 2) +
+                ", parentEpicID='" + parentEpicId +
+                "'}";
+    }
+
+    @Override
+    public String toWriteString() {
+
+        return String.valueOf(getId()) + ',' +
+                TaskType.SUBTASK + ',' +
+                getName() + ',' +
+                getDescription() + ',' +
+                getStatus() + ',' +
+                getParentEpicId();
     }
 }

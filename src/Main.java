@@ -1,11 +1,14 @@
-import task_tracker.manager.InMemoryTaskManager;
+import task_tracker.manager.FileBackendTaskManager;
 import task_tracker.manager.Managers;
+
+import java.nio.file.Paths;
 
 public class Main {
 
     public static void main(String[] args) {
-        Managers managers = new Managers();
-        InMemoryTaskManager taskManager = (InMemoryTaskManager) managers.getDefault();
+        String path = "resources/save.csv";
+        Managers managers = new Managers(Paths.get(path));
+        FileBackendTaskManager taskManager = (FileBackendTaskManager) managers.getManager();
 
         System.out.println("Вас приветствует программа \"Трекер задач\"");
 
@@ -17,7 +20,7 @@ public class Main {
                     return;
 
                 case (1):
-                    ConsoleUtil.loadTasks(taskManager);
+                    taskManager.load();
                     break;
 
                 case (2):
@@ -50,6 +53,10 @@ public class Main {
 
                 case (9):
                     ConsoleUtil.deleteTasks(taskManager);
+                    break;
+
+                case (10):
+                    ConsoleUtil.createTasks(taskManager);
                     break;
 
                 default:

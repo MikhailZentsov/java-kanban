@@ -5,36 +5,61 @@ import org.jetbrains.annotations.NotNull;
 import java.util.*;
 
 public class Epic extends Task {
-    private final List<Integer> subtasksId;
+    private final List<Subtask> subtasks;
 
     public Epic(String name, String description) {
         super(name, description);
-        this.subtasksId = new ArrayList<>();
+        this.subtasks = new ArrayList<>();
     }
 
     public Epic(@NotNull Epic epic) {
         super(epic);
         this.setStatus(Status.NEW);
-        this.subtasksId = epic.getSubtasks();
+        this.subtasks = epic.getSubtasks();
     }
 
-    public List<Integer> getSubtasks() {
-        return subtasksId;
+    public Epic(String name, String description, Integer id, Status status) {
+        super(name, description, id, status);
+        this.subtasks = new ArrayList<>();
     }
 
-    public void addSubtask(Integer subtaskId) {
-        if (this.subtasksId.contains(subtaskId))
-            System.out.println("Подзачада с ID " + subtaskId + " уже добавлена к эпику.");
-        else
-            this.subtasksId.add(subtaskId);
+    public List<Subtask> getSubtasks() {
+        return subtasks;
+    }
+
+    public void setStatus() {
+        List<Status> list = new ArrayList<>();
+
+        for (Subtask subtask : subtasks) {
+            list.add(subtask.getStatus());
+        }
+
+        setStatus(list);
+    }
+    @Override
+    public void setStatus(Status status) {
+        super.setStatus(status);
+    }
+
+    public boolean addSubtask(Subtask subtask) {
+        if (!this.subtasks.contains(subtask)) {
+            this.subtasks.add(subtask);
+            setStatus();
+
+            return true;
+        }
+
+        return false;
     }
 
     public void removeSubtask(Integer id) {
-        this.subtasksId.remove(id);
+        if (subtasks.contains(id)) {
+            this.subtasks.remove(id);
+        }
     }
 
     public void removeAllSubtasks() {
-        this.subtasksId.clear();
+        this.subtasks.clear();
         this.setStatus(Status.NEW);
     }
 
@@ -45,12 +70,12 @@ public class Epic extends Task {
 
         if (!list.isEmpty()) {
             for (Status item : list) {
-                if (isAllDone && (item == Status.NEW || item == Status.IN_PROGRESS)) isAllDone = false;
-                if (isAllNew && (item == Status.DONE || item == Status.IN_PROGRESS)) isAllNew = false;
+                if (isAllDone && (item == Status.NEW || item == Status.IN_PROGRESS)) { isAllDone = false; }
+                if (isAllNew && (item == Status.DONE || item == Status.IN_PROGRESS)) { isAllNew = false; }
             }
 
-            if (isAllNew) status = Status.NEW;
-            if (isAllDone) status = Status.DONE;
+            if (isAllNew) { status = Status.NEW; }
+            if (isAllDone) { status = Status.DONE; }
         } else {
             status = Status.NEW;
         }
@@ -64,7 +89,8 @@ public class Epic extends Task {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
-        return Objects.equals(subtasksId, epic.subtasksId)
+
+        return Objects.equals(subtasks, epic.subtasks)
                 && ((Task) this).equals(o);
     }
 
@@ -73,11 +99,10 @@ public class Epic extends Task {
         int hash = 17;
 
         hash += ((Task) this).hashCode();
-
         hash *= 31;
 
-        if (subtasksId != null) {
-            hash += subtasksId.hashCode();
+        if (subtasks != null) {
+            hash += subtasks.hashCode();
         }
 
         return hash;
@@ -85,19 +110,30 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        String result = "Epic{"
-                + "ID='" + getId() + '\''
-                + ", name='" + getName() + '\''
-                + ", description='" + getDescription() + '\''
-                + ", status='" + getStatus() + '\''
-                + ", subtasksID=";
+        StringBuilder result = new StringBuilder(super.toString().substring(0, super.toString().length() - 2)
+                + ", subtasks=");
 
-        if (subtasksId != null) {
-            result += subtasksId.toString();
+        if (!subtasks.isEmpty()) {
+            for (Subtask subtask : subtasks) {
+                result.append("\n\t");
+                result.append(subtask.toString());
+            }
+        } else {
+            result.append("'Empty'");
         }
 
-        result += "}";
+        result.append("]}");
 
-        return result;
+        return result.toString();
+    }
+
+    @Override
+    public String toWriteString() {
+
+        return String.valueOf(getId()) + ',' +
+                TaskType.EPIC + ',' +
+                getName() + ',' +
+                getDescription() + ',' +
+                getStatus();
     }
 }
