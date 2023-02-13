@@ -1,7 +1,8 @@
 package task_tracker.manager;
 
 import org.jetbrains.annotations.NotNull;
-import task_tracker.manager.exeptions.ManagerSaveException;
+import task_tracker.manager.exeption.ManagerLoadException;
+import task_tracker.manager.exeption.ManagerSaveException;
 import task_tracker.model.*;
 
 import java.io.*;
@@ -13,17 +14,18 @@ import java.util.List;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
     Path path;
-    public FileBackendTaskManager (@NotNull Path path) {
+
+    public FileBackendTaskManager(@NotNull Path path) {
         this.path = path;
     }
 
-    private void save () {
-        try {
-            if (!Files.exists(path)) {
+    private void save() {
+        if (!Files.exists(path)) {
+            try {
                 Files.createFile(path);
+            } catch (IOException e) {
+                throw new ManagerSaveException(e.getMessage());
             }
-        } catch (IOException e) {
-            throw new ManagerSaveException();
         }
 
         try (BufferedWriter bw = new BufferedWriter(
@@ -51,7 +53,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             bw.write(String.join(",", listHistoryId.toArray(new String[0])));
 
         } catch (IOException e) {
-            throw new ManagerSaveException();
+            throw new ManagerSaveException(e.getMessage());
         }
     }
 
@@ -86,10 +88,10 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                     }
                 }
             } catch (IOException e) {
-                throw new ManagerSaveException();
+                throw new ManagerLoadException(e.getMessage());
             }
         } else {
-            throw new ManagerSaveException();
+            throw new ManagerLoadException("Файла загрузки не существует.");
         }
     }
 
@@ -216,5 +218,26 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         boolean result = super.deleteSubtask(task);
         save();
         return result;
+    }
+
+    @Override
+    public Task getTask(int id) {
+        Task task = super.getTask(id);
+        save();
+        return task;
+    }
+
+    @Override
+    public Epic getEpic(int id) {
+        Epic task = super.getEpic(id);
+        save();
+        return task;
+    }
+
+    @Override
+    public Subtask getSubtask(int id) {
+        Subtask task = super.getSubtask(id);
+        save();
+        return task;
     }
 }
