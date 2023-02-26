@@ -38,7 +38,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             listTasks.addAll(getEpics());
             listTasks.addAll(getSubtasks());
 
-            bw.write("id,type,name,description,status,parent_epic\n");
+            bw.write("id,type,name,description,status,parent_epic_id\n");
 
             for (Task task : listTasks) {
                 bw.write(task.toWriteString() + '\n');
