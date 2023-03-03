@@ -41,7 +41,8 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             bw.write("id,type,name,description,status,parent_epic_id\n");
 
             for (Task task : listTasks) {
-                bw.write(task.toWriteString() + '\n');
+                bw.write(task.toSaveString());
+                bw.newLine();
             }
 
             bw.write('\n');
@@ -51,13 +52,14 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             }
 
             bw.write(String.join(",", listHistoryId.toArray(new String[0])));
-
         } catch (IOException e) {
             throw new ManagerSaveException(e.getMessage());
         }
     }
 
-    public void load() {
+    public static FileBackendTaskManager load(Path path) {
+        FileBackendTaskManager manager = new FileBackendTaskManager(path);
+
         if (Files.exists(path)) {
             try (BufferedReader br = new BufferedReader(
                     new FileReader(path.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
@@ -80,11 +82,11 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
                 history = br.readLine();
 
-                createTasks(list);
+                createTasks(list, manager);
 
                 if (history != null) {
                     for (String taskId : history.split(",")) {
-                        historyManager.add(getAnyTaskById(Integer.parseInt(taskId)));
+                        manager.historyManager.add(manager.getAnyTaskById(Integer.parseInt(taskId)));
                     }
                 }
             } catch (IOException e) {
@@ -93,35 +95,37 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         } else {
             throw new ManagerLoadException("Файла загрузки не существует.");
         }
+
+        return manager;
     }
 
-    private void createTasks(List<String> list) {
+    private static void createTasks(List<String> list, FileBackendTaskManager manager) {
         int maxId = 1;
 
         for (String item : list) {
             String[] line = item.split(",");
-            switch (line[1]) {
-                case "TASK":
+            switch (TaskType.valueOf(line[1])) {
+                case TASK:
                     Task task = new Task(line[2], line[3], Integer.parseInt(line[0]), Status.valueOf(line[4]));
 
                     if (maxId < task.getId()) {
                         maxId = task.getId();
                     }
 
-                    tasks.put(task.getId(), task);
+                    manager.tasks.put(task.getId(), task);
                     break;
 
-                case "EPIC":
+                case EPIC:
                     Epic epic = new Epic(line[2], line[3], Integer.parseInt(line[0]), Status.valueOf(line[4]));
 
                     if (maxId < epic.getId()) {
                         maxId = epic.getId();
                     }
 
-                    epics.put(epic.getId(), epic);
+                    manager.epics.put(epic.getId(), epic);
                     break;
 
-                case "SUBTASK":
+                case SUBTASK:
                     Subtask subtask = new Subtask(line[2],
                             line[3],
                             Integer.parseInt(line[0]),
@@ -132,15 +136,15 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                         maxId = subtask.getId();
                     }
 
-                    subtasks.put(subtask.getId(), subtask);
-                    epics.get(subtask.getParentEpicId()).addSubtask(subtask);
+                    manager.subtasks.put(subtask.getId(), subtask);
+                    manager.epics.get(subtask.getParentEpicId()).addSubtask(subtask);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + line[1]);
             }
         }
 
-        id = maxId;
+        manager.id = maxId;
     }
 
     @Override

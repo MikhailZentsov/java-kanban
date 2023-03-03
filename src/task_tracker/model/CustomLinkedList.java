@@ -28,10 +28,8 @@ public class CustomLinkedList<T> {
         return newNode;
     }
 
-    public boolean add(T element) {
+    public boolean add(T element, int key) {
         try {
-            var key = ((Task) element).getId();
-
             if (map.containsKey(key)) {
                 unlink(map.get(key));
             }

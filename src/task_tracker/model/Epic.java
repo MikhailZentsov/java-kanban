@@ -14,7 +14,7 @@ public class Epic extends Task {
 
     public Epic(@NotNull Epic epic) {
         super(epic);
-        this.setStatus(Status.NEW);
+        super.setStatus(Status.NEW);
         this.subtasks = epic.getSubtasks();
     }
 
@@ -38,7 +38,7 @@ public class Epic extends Task {
     }
     @Override
     public void setStatus(Status status) {
-        super.setStatus(status);
+        setStatus();
     }
 
     public boolean addSubtask(Subtask subtask) {
@@ -52,18 +52,19 @@ public class Epic extends Task {
         return false;
     }
 
-    public void removeSubtask(int id) {
-        if (subtasks.contains(id)) {
-            this.subtasks.remove(id);
+    public void removeSubtask(Subtask task) {
+        if (subtasks.contains(task)) {
+            this.subtasks.remove(task);
         }
+        setStatus();
     }
 
     public void removeAllSubtasks() {
         this.subtasks.clear();
-        this.setStatus(Status.NEW);
+        super.setStatus(Status.NEW);
     }
 
-    public void setStatus(@NotNull List<Status> list) {
+    private void setStatus(@NotNull List<Status> list) {
         Status status = Status.IN_PROGRESS;
         boolean isAllDone = true;
         boolean isAllNew = true;
@@ -80,7 +81,7 @@ public class Epic extends Task {
             status = Status.NEW;
         }
 
-        this.setStatus(status);
+        super.setStatus(status);
     }
 
     @Override
@@ -128,7 +129,7 @@ public class Epic extends Task {
     }
 
     @Override
-    public String toWriteString() {
+    public String toSaveString() {
 
         return String.valueOf(getId()) + ',' +
                 TaskType.EPIC + ',' +

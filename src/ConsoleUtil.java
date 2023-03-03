@@ -16,7 +16,7 @@ public class ConsoleUtil {
 
         System.out.println();
         System.out.println("Выберите действие:");
-        System.out.println("1 - Загрузить задачи и историю");
+        System.out.println("1 - Сгененировать задачи");
         System.out.println("2 - Показать все задачи");
         System.out.println("3 - Изменить статусы задач");
         System.out.println("4 - Удалить задачи");
@@ -25,7 +25,6 @@ public class ConsoleUtil {
         System.out.println("7 - Показать историю");
         System.out.println("8 - Показать задачу");
         System.out.println("9 - Удалить задачу");
-        System.out.println("10 - Сгененировать задачи");
 
         System.out.println("0 - Выход из приложения");
 

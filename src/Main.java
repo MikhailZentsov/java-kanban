@@ -20,7 +20,7 @@ public class Main {
                     return;
 
                 case (1):
-                    taskManager.load();
+                    ConsoleUtil.createTasks(taskManager);
                     break;
 
                 case (2):
@@ -53,10 +53,6 @@ public class Main {
 
                 case (9):
                     ConsoleUtil.deleteTasks(taskManager);
-                    break;
-
-                case (10):
-                    ConsoleUtil.createTasks(taskManager);
                     break;
 
                 default:

@@ -108,7 +108,7 @@ public class Task {
                 '}';
     }
 
-    public String toWriteString() {
+    public String toSaveString() {
 
         return String.valueOf(getId()) + ',' +
                 TaskType.TASK + ',' +

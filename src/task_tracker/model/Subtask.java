@@ -61,7 +61,7 @@ public class Subtask extends Task {
     }
 
     @Override
-    public String toWriteString() {
+    public String toSaveString() {
 
         return String.valueOf(getId()) + ',' +
                 TaskType.SUBTASK + ',' +
