@@ -3,7 +3,7 @@ package task_tracker.manager;
 import java.nio.file.Path;
 
 public class Managers {
-    TaskManager manager;
+    private final TaskManager manager;
 
     public Managers() {
         manager = new InMemoryTaskManager();

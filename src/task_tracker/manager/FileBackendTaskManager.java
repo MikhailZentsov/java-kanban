@@ -11,6 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
     Path path;
@@ -24,36 +25,34 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             try {
                 Files.createFile(path);
             } catch (IOException e) {
-                throw new ManagerSaveException(e.getMessage());
+                throw new ManagerSaveException("Не удалось создать файл");
             }
         }
 
         try (BufferedWriter bw = new BufferedWriter(
                 new FileWriter(path.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
-            List<Task> listTasks = new ArrayList<>();
-            List<Task> listHistory = historyManager.getHistory();
-            List<String> listHistoryId = new ArrayList<>();
 
-            listTasks.addAll(getTasks());
-            listTasks.addAll(getEpics());
-            listTasks.addAll(getSubtasks());
+            bw.write("id,type,name,description,status,parent_epic_id");
 
-            bw.write("id,type,name,description,status,parent_epic_id\n");
+            if (!getAllTasks().isEmpty()) {
 
-            for (Task task : listTasks) {
-                bw.write(task.toSaveString());
                 bw.newLine();
+
+                for (Task task : getAllTasks()) {
+                    bw.write(task.toSaveString());
+                    bw.newLine();
+                }
+
+                bw.newLine();
+
+                bw.write(historyManager.getHistory()
+                        .stream()
+                        .map(Task::getId)
+                        .map(Object::toString)
+                        .collect(Collectors.joining(",")));
             }
-
-            bw.write('\n');
-
-            for (Task item : listHistory) {
-                listHistoryId.add(item.getId().toString());
-            }
-
-            bw.write(String.join(",", listHistoryId.toArray(new String[0])));
         } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
+            throw new ManagerSaveException("Не удалось записать файл");
         }
     }
 
@@ -63,18 +62,20 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         if (Files.exists(path)) {
             try (BufferedReader br = new BufferedReader(
                     new FileReader(path.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
-                List<String> list = new ArrayList<>();
+                List<String> listOfStringTasks = new ArrayList<>();
                 String history;
                 String line;
                 boolean isTask = true;
 
-                br.readLine();
+                if (br.readLine() == null) {
+                    throw new ManagerLoadException("Файл пуст");
+                }
 
                 while (br.ready() && isTask) {
                     line = br.readLine();
 
                     if (!line.isEmpty()) {
-                        list.add(line);
+                        listOfStringTasks.add(line);
                     } else {
                         isTask = false;
                     }
@@ -82,18 +83,18 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
                 history = br.readLine();
 
-                createTasks(list, manager);
+                createTasks(listOfStringTasks, manager);
 
                 if (history != null) {
                     for (String taskId : history.split(",")) {
-                        manager.historyManager.add(manager.getAnyTaskById(Integer.parseInt(taskId)));
+                        manager.historyManager.add(manager.getAnyTaskWithoutSave(Integer.parseInt(taskId)));
                     }
                 }
-            } catch (IOException e) {
-                throw new ManagerLoadException(e.getMessage());
+            } catch (IOException | ArrayIndexOutOfBoundsException | ArrayStoreException e) {
+                throw new ManagerLoadException("Файл не удалось считать");
             }
         } else {
-            throw new ManagerLoadException("Файла загрузки не существует.");
+            throw new ManagerLoadException("Файла загрузки не существует");
         }
 
         return manager;
@@ -137,111 +138,87 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                     }
 
                     manager.subtasks.put(subtask.getId(), subtask);
-                    manager.epics.get(subtask.getParentEpicId()).addSubtask(subtask);
+                    manager.epics.get(subtask.getParentEpicId()).addSubtask(subtask.getId());
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + line[1]);
             }
         }
 
-        manager.id = maxId;
+        manager.id = ++maxId;
     }
 
     @Override
-    public void addTask(@NotNull Task task) {
-        super.addTask(task);
+    public void deleteAllTasks() {
+        super.deleteAllTasks();
         save();
     }
 
     @Override
-    public void addEpic(@NotNull Epic task) {
-        super.addEpic(task);
+    public Task getAnyTask(int id) {
+        Task result = super.getAnyTask(id);
         save();
-    }
 
-    @Override
-    public boolean addSubtask(Subtask task) {
-        boolean result = super.addSubtask(task);
-        save();
         return result;
     }
 
     @Override
-    public void clearTasks() {
-        super.clearTasks();
+    public boolean addTask(Task task) {
+        boolean result = super.addTask(task);
         save();
+
+        return result;
     }
 
     @Override
-    public void clearEpics() {
-        super.clearEpics();
+    public boolean addEpic(Epic epic) {
+        boolean result = super.addEpic(epic);
         save();
+
+        return result;
     }
 
     @Override
-    public void clearSubtasks() {
-        super.clearSubtasks();
+    public boolean addSubtask(Subtask subtask) {
+        boolean result = super.addSubtask(subtask);
         save();
+
+        return result;
     }
 
     @Override
-    public boolean updateTask(@NotNull Task task) {
+    public boolean updateTask(Task task) {
         boolean result = super.updateTask(task);
         save();
+
         return result;
     }
 
     @Override
-    public boolean updateEpic(@NotNull Epic task) {
-        boolean result = super.updateEpic(task);
+    public boolean updateEpic(Epic epic) {
+        boolean result = super.updateEpic(epic);
         save();
+
         return result;
     }
 
     @Override
-    public boolean updateSubtask(@NotNull Subtask task) {
-        return super.updateSubtask(task);
-    }
-
-    @Override
-    public boolean deleteTask(int id) {
-        boolean result = super.deleteTask(id);
+    public boolean updateSubtask(Subtask subtask) {
+        boolean result = super.updateSubtask(subtask);
         save();
+
         return result;
     }
 
     @Override
-    public boolean deleteEpic(int id) {
-        boolean result = super.deleteEpic(id);
+    public boolean deleteAnyTask(int id) {
+        boolean result = super.deleteAnyTask(id);
         save();
+
         return result;
     }
 
-    @Override
-    public boolean deleteSubtask(Subtask task) {
-        boolean result = super.deleteSubtask(task);
-        save();
-        return result;
-    }
-
-    @Override
-    public Task getTask(int id) {
-        Task task = super.getTask(id);
-        save();
-        return task;
-    }
-
-    @Override
-    public Epic getEpic(int id) {
-        Epic task = super.getEpic(id);
-        save();
-        return task;
-    }
-
-    @Override
-    public Subtask getSubtask(int id) {
-        Subtask task = super.getSubtask(id);
-        save();
-        return task;
+    private Task getAnyTaskWithoutSave(int id) {
+        return super.getAnyTask(id);
     }
 }

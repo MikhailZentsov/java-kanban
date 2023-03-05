@@ -28,19 +28,19 @@ public class Main {
                     break;
 
                 case (3):
-                    ConsoleUtil.changeStatus(taskManager);
+                    System.out.println("Метод отключен");
                     break;
 
                 case (4):
-                    taskManager.clearTasks();
+
                     break;
 
                 case (5):
-                    taskManager.clearEpics();
+
                     break;
 
                 case (6):
-                    taskManager.clearSubtasks();
+
                     break;
 
                 case (7):

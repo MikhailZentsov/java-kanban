@@ -1,0 +1,4 @@
+id,type,name,description,status,parent_epic_id
+1,TASK,Обычная задача,Простая задача,NEW
+
+1

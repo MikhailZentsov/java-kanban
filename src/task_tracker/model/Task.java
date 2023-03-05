@@ -1,7 +1,5 @@
 package task_tracker.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
 public class Task {
@@ -10,16 +8,10 @@ public class Task {
     private Integer id;
     private Status status;
 
-    public Task(@NotNull Task task) {
-        this.name = task.getName();
-        this.description = task.getDescription();
-        this.id = task.getId();
-        this.status = task.getStatus();
-    }
-
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
+        this.id = 0;
         this.status = Status.NEW;
     }
 
@@ -69,31 +61,14 @@ public class Task {
         Task task = (Task) o;
 
         return id.equals(task.id)
-                && Objects.equals(name, task.name)
-                && Objects.equals(description, task.description);
+                && name.equals(task.name)
+                && description.equals(task.description)
+                && status.equals(task.status);
     }
 
     @Override
     public int hashCode() {
-        int hash = 17;
-
-        if (name != null) {
-            hash += name.hashCode();
-        }
-
-        hash *= 31;
-
-        if (description != null) {
-            hash += description.hashCode();
-        }
-
-        hash *= 17;
-
-        if (id != null) {
-            hash += id.hashCode();
-        }
-
-        return hash;
+        return Objects.hash(name, description, id, status);
     }
 
     @Override

@@ -1,29 +1,26 @@
 package task_tracker.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.Objects;
 
 public class Subtask extends Task {
-    private final Integer parentEpicId;
+    private int parentEpicId;
 
-    public Subtask(String name, String description, @NotNull Epic parentEpic) {
-        super(name, description);
-        this.parentEpicId = parentEpic.getId();
+    public Subtask(String name, String description, int parentEpicId) {
+        super(name, description, 0, Status.NEW);
+        this.parentEpicId = parentEpicId;
     }
 
-    public Subtask(@NotNull Subtask subtask) {
-        super(subtask);
-        this.parentEpicId = subtask.parentEpicId;
-    }
-
-    public Subtask(String name, String description, Integer id, Status status, Integer parentEpicId) {
+    public Subtask(String name, String description, Integer id, Status status, int parentEpicId) {
         super(name, description, id, status);
         this.parentEpicId = parentEpicId;
     }
 
-    public Integer getParentEpicId() {
+    public int getParentEpicId() {
         return parentEpicId;
+    }
+
+    public void setParentEpicId(int parentEpicId) {
+        this.parentEpicId = parentEpicId;
     }
 
     @Override
@@ -34,28 +31,21 @@ public class Subtask extends Task {
         Subtask subtask = (Subtask) o;
 
         return Objects.equals(parentEpicId, subtask.parentEpicId)
-                && ((Task) this).equals(o);
+                && Objects.equals(getName(), subtask.getName())
+                && Objects.equals(getDescription(), subtask.getDescription())
+                && Objects.equals(getId(), subtask.getId())
+                && Objects.equals(getStatus(), subtask.getStatus());
     }
 
     @Override
     public int hashCode() {
-        int hash = 17;
-
-        hash += ((Task) this).hashCode();
-
-        hash *= 31;
-
-        if (parentEpicId != null) {
-            hash += parentEpicId.hashCode();
-        }
-
-        return hash;
+        return Objects.hash(getName(), getDescription(), getId(), getStatus(), parentEpicId);
     }
 
     @Override
     public String toString() {
 
-        return super.toString().substring(0, super.toString().length() - 2) +
+        return super.toString().substring(0, super.toString().length() - 1) +
                 ", parentEpicID='" + parentEpicId +
                 "'}";
     }
@@ -68,6 +58,6 @@ public class Subtask extends Task {
                 getName() + ',' +
                 getDescription() + ',' +
                 getStatus() + ',' +
-                getParentEpicId();
+                parentEpicId;
     }
 }

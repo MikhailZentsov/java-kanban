@@ -1,0 +1,7 @@
+id,type,name,description,status,parent_epic_id
+1,TASK,Обычная задача,Простая задача,NEW
+2,EPIC,Важный эпик,Очень важный,NEW
+3,SUBTASK,Подзадача1,Просто подзадача1,NEW,2
+4,SUBTASK,Подзадача2,Просто подзадача2,NEW,2
+
+1,4,2

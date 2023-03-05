@@ -1,21 +1,13 @@
 package task_tracker.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 
 public class Epic extends Task {
-    private final List<Subtask> subtasks;
+    private final List<Integer> subtasks;
 
     public Epic(String name, String description) {
-        super(name, description);
+        super(name, description, 0, Status.NEW);
         this.subtasks = new ArrayList<>();
-    }
-
-    public Epic(@NotNull Epic epic) {
-        super(epic);
-        super.setStatus(Status.NEW);
-        this.subtasks = epic.getSubtasks();
     }
 
     public Epic(String name, String description, Integer id, Status status) {
@@ -23,28 +15,13 @@ public class Epic extends Task {
         this.subtasks = new ArrayList<>();
     }
 
-    public List<Subtask> getSubtasks() {
+    public List<Integer> getSubtasks() {
         return subtasks;
     }
 
-    public void setStatus() {
-        List<Status> list = new ArrayList<>();
-
-        for (Subtask subtask : subtasks) {
-            list.add(subtask.getStatus());
-        }
-
-        setStatus(list);
-    }
-    @Override
-    public void setStatus(Status status) {
-        setStatus();
-    }
-
-    public boolean addSubtask(Subtask subtask) {
-        if (!this.subtasks.contains(subtask)) {
-            this.subtasks.add(subtask);
-            setStatus();
+    public boolean addSubtask(Integer id) {
+        if (!subtasks.contains(id)) {
+            subtasks.add(id);
 
             return true;
         }
@@ -52,36 +29,18 @@ public class Epic extends Task {
         return false;
     }
 
-    public void removeSubtask(Subtask task) {
-        if (subtasks.contains(task)) {
-            this.subtasks.remove(task);
+    public boolean removeSubtask(Integer id) {
+        if (subtasks.contains(id)) {
+            subtasks.remove(id);
+
+            return true;
         }
-        setStatus();
+
+        return false;
     }
 
     public void removeAllSubtasks() {
         this.subtasks.clear();
-        super.setStatus(Status.NEW);
-    }
-
-    private void setStatus(@NotNull List<Status> list) {
-        Status status = Status.IN_PROGRESS;
-        boolean isAllDone = true;
-        boolean isAllNew = true;
-
-        if (!list.isEmpty()) {
-            for (Status item : list) {
-                if (isAllDone && (item == Status.NEW || item == Status.IN_PROGRESS)) { isAllDone = false; }
-                if (isAllNew && (item == Status.DONE || item == Status.IN_PROGRESS)) { isAllNew = false; }
-            }
-
-            if (isAllNew) { status = Status.NEW; }
-            if (isAllDone) { status = Status.DONE; }
-        } else {
-            status = Status.NEW;
-        }
-
-        super.setStatus(status);
     }
 
     @Override
@@ -91,39 +50,30 @@ public class Epic extends Task {
         if (!super.equals(o)) return false;
         Epic epic = (Epic) o;
 
-        return Objects.equals(subtasks, epic.subtasks)
-                && ((Task) this).equals(o);
+        return subtasks.equals(epic.subtasks)
+                && getName().equals(epic.getName())
+                && getDescription().equals(epic.getDescription())
+                && getId().equals(epic.getId())
+                && getStatus().equals(epic.getStatus());
     }
 
     @Override
     public int hashCode() {
-        int hash = 17;
-
-        hash += ((Task) this).hashCode();
-        hash *= 31;
-
-        if (subtasks != null) {
-            hash += subtasks.hashCode();
-        }
-
-        return hash;
+        return Objects.hash(getName(), getDescription(), getId(), getStatus(), subtasks);
     }
 
     @Override
     public String toString() {
-        StringBuilder result = new StringBuilder(super.toString().substring(0, super.toString().length() - 2)
-                + ", subtasks=");
+        StringBuilder result = new StringBuilder(super.toString().substring(0, super.toString().length() - 1)
+                + ", subtasksID=");
 
         if (!subtasks.isEmpty()) {
-            for (Subtask subtask : subtasks) {
-                result.append("\n\t");
-                result.append(subtask.toString());
-            }
+            result.append(subtasks);
         } else {
-            result.append("'Empty'");
+            result.append("[Empty]");
         }
 
-        result.append("]}");
+        result.append("}");
 
         return result.toString();
     }

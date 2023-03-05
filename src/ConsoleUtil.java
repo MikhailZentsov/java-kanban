@@ -5,7 +5,6 @@ import task_tracker.model.Status;
 import task_tracker.model.Subtask;
 import task_tracker.model.Task;
 
-import java.util.List;
 import java.util.Scanner;
 
 public class ConsoleUtil {
@@ -39,53 +38,78 @@ public class ConsoleUtil {
     }
 
     public static void createTasks(@NotNull InMemoryTaskManager taskManager) {
-        Epic epic1 = new Epic("Переезд", "Переезд в другую квартиру");
-        Epic epic2 = new Epic("Важный эпик 2", "Очень важный");
-        Epic epic3 = new Epic("Важный эпик 2", "Очень важный");
-        Epic epic4 = new Epic("Важный эпик 2", "Очень важный");
+        Epic epic1 = new Epic(
+                "Переезд",
+                "Переезд в другую квартиру",
+                1,
+                Status.NEW);
+        Epic epic2 = new Epic(
+                "Важный эпик 2",
+                "Очень важный",
+                1,
+                Status.NEW);
+        Epic epic3 = new Epic(
+                "Важный эпик 2",
+                "Очень важный",
+                1,
+                Status.NEW);
+        Epic epic4 = new Epic(
+                "Важный эпик 2",
+                "Очень важный",
+                1,
+                Status.NEW);
 
-        taskManager.addTask(new Task("Обычная задача","Простая задача"));
-        taskManager.addTask(new Task("Поесть","Не забыть поесть!"));
-        taskManager.addTask(new Task("Почитать перед сном","Почитать перед сном про Java"));
+        taskManager.addTask(new Task(
+                "Обычная задача",
+                "Простая задача",
+                1,
+                Status.NEW));
+        taskManager.addTask(new Task(
+                "Поесть",
+                "Не забыть поесть!",
+                1,
+                Status.NEW));
+        taskManager.addTask(new Task(
+                "Почитать перед сном",
+                "Почитать перед сном про Java",
+                1,
+                Status.NEW));
 
         taskManager.addEpic(epic1);
         taskManager.addEpic(epic2);
         taskManager.addEpic(epic3);
         taskManager.addEpic(epic4);
 
-        taskManager.addSubtask(new Subtask("Собрать коробки", "Собрать вещи в коробки", epic1));
-        taskManager.addSubtask(new Subtask("Упаковать кошку", "Упаковать кошку в переноску", epic1));
-        taskManager.addSubtask(new Subtask("Сказать слова прощания", "Добрые слова прощания", epic1));
+        taskManager.addSubtask(new Subtask(
+                "Собрать коробки",
+                "Собрать вещи в коробки",
+                1,
+                Status.NEW,
+                epic1.getId()));
+        taskManager.addSubtask(new Subtask(
+                "Упаковать кошку",
+                "Упаковать кошку в переноску",
+                1,
+                Status.NEW,
+                epic1.getId()));
+        taskManager.addSubtask(new Subtask(
+                "Сказать слова прощания",
+                "Добрые слова прощания",
+                1,
+                Status.NEW,
+                epic1.getId()));
 
-        taskManager.addSubtask(new Subtask("Задача 1", "", epic2));
-        taskManager.addSubtask(new Subtask("Задача 1", "", epic2));
+        taskManager.addSubtask(new Subtask("Задача 1", "", 1, Status.NEW, epic2.getId()));
+        taskManager.addSubtask(new Subtask("Задача 1", "", 1, Status.NEW, epic2.getId()));
 
-        taskManager.addSubtask(new Subtask("Задача 1", "", epic3));
-        taskManager.addSubtask(new Subtask("Задача 1", "", epic3));
+        taskManager.addSubtask(new Subtask("Задача 1", "", 1, Status.NEW, epic3.getId()));
+        taskManager.addSubtask(new Subtask("Задача 1", "", 1, Status.NEW, epic3.getId()));
 
         System.out.println("Задачи загружены в систему.");
     }
 
-    public static void changeStatus(@NotNull InMemoryTaskManager taskManager) {
-        List<Subtask> subtasks = taskManager.getSubtasks();
-
-        for (Subtask subtask : subtasks) {
-            subtask.setStatus(Status.DONE);
-            taskManager.addSubtask(subtask);
-            taskManager.deleteSubtask(subtask);
-        }
-    }
-
     public static void showAllTasks(@NotNull InMemoryTaskManager taskManager) {
-        for (Epic epic : taskManager.getEpics()) {
-            System.out.println(epic.toString());
-        }
-
-        for (Subtask task : taskManager.getSubtasks()) {
-            System.out.println(task.toString());
-        }
-
-        for (Task task : taskManager.getTasks()) {
+        for (Task task : taskManager.getAllTasks()) {
             System.out.println(task.toString());
         }
     }
@@ -107,7 +131,7 @@ public class ConsoleUtil {
             System.out.println("Вы ввели не число.");
         }
 
-        Task task = taskManager.getAnyTaskById(taskId);
+        Task task = taskManager.getAnyTask(taskId);
 
         if (task != null) {
             System.out.println(task);
@@ -127,12 +151,13 @@ public class ConsoleUtil {
             System.out.println("Вы ввели не число.");
         }
 
-        if (taskManager.deleteTask(taskId) ||
-                taskManager.deleteSubtask(taskManager.getSubtask(taskId)) ||
-                taskManager.deleteEpic(taskId)) {
+        if (taskId > 1) {
+
             System.out.println("Задача удалена.");
         } else {
             System.out.println("Такой задачи нет.");
         }
+
+        taskManager.deleteAnyTask(taskId);
     }
 }
