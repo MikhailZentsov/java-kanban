@@ -7,6 +7,7 @@ import task_tracker.model.Task;
 import java.util.List;
 
 public interface TaskManager {
+    List<Task> getPrioritizedTasks();
     List<Task> getAllTasks();
     void deleteAllTasks();
     Task getAnyTask(int id);
