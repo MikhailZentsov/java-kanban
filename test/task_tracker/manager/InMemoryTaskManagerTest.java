@@ -1,5 +1,6 @@
 package task_tracker.manager;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import task_tracker.model.Epic;
 import task_tracker.model.Status;
@@ -12,11 +13,16 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 class InMemoryTaskManagerTest {
+    private static InMemoryTaskManager taskManager;
+
+    @BeforeEach
+    public void beforeEach(){
+        taskManager = new InMemoryTaskManager();
+    }
 
     @Test
     void testGetDeleteAllTasks() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic", 1, Status.NEW);
         Subtask subtask1 = new Subtask(
                 "name_subtask1",
@@ -29,7 +35,7 @@ class InMemoryTaskManagerTest {
                 "description_subtask2",
                 3,
                 Status.NEW,
-                epic.getId());
+                1);
         Task task = new Task("name_task", "description_task", 4, Status.NEW);
 
         assertArrayEquals(taskManager.getAllTasks().toArray(), new Task[0],
@@ -61,8 +67,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testGetAnyTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic", 1, Status.NEW);
 
         assertNull(taskManager.getAnyTask(5),
@@ -76,8 +81,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testAddTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Task task = new Task("name_task", "description_task", 4, Status.DONE);
 
         assertFalse(taskManager.addTask(null),
@@ -93,8 +97,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testAddEpic() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic", 7, Status.NEW);
 
         assertFalse(taskManager.addEpic(null),
@@ -113,8 +116,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testAddSubtask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic", 1, Status.NEW);
         Subtask subtask1 = new Subtask(
                 "name_subtask1",
@@ -149,8 +151,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testUpdateTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Task task = new Task("name_task1", "description_task1", 1, Status.NEW);
         Task updateTask = new Task("name_task2", "description_task2", 1, Status.DONE);
         Task wrongTask = new Task("name_task3", "description_task3", 7, Status.NEW);
@@ -172,8 +173,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testUpdateEpic() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic1", "description_epic1", 1, Status.NEW);
         Epic updateEpic = new Epic("name_epic2", "description_epic2", 1, Status.DONE);
         Epic wrongEpic = new Epic("name_epic3", "description_epic3", 7, Status.NEW);
@@ -193,8 +193,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testUpdateSubtask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic1 = new Epic("name_epic1", "description_epic1");
         Epic epic2 = new Epic("name_epic2", "description_epic2");
 
@@ -259,8 +258,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testDeleteAnyTask() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic");
 
         Subtask subtask = new Subtask(
@@ -305,8 +303,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testGetEpicSubtasks() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic");
 
         Subtask subtask = new Subtask(
@@ -336,8 +333,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testGetHistory() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic");
 
         Subtask subtask = new Subtask(
@@ -369,8 +365,7 @@ class InMemoryTaskManagerTest {
 
     @Test
     void testEpicStatus() {
-        InMemoryTaskManager taskManager = new InMemoryTaskManager();
-
+        taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic", 1, Status.DONE);
 
         taskManager.addEpic(epic);

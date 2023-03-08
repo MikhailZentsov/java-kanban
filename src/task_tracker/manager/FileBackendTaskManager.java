@@ -9,6 +9,8 @@ import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -32,7 +34,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         try (BufferedWriter bw = new BufferedWriter(
                 new FileWriter(path.toAbsolutePath().toString(), StandardCharsets.UTF_8))) {
 
-            bw.write("id,type,name,description,status,parent_epic_id");
+            bw.write("id,type,name,description,status,duration,start_time,parent_epic_id");
 
             if (!getAllTasks().isEmpty()) {
 
@@ -107,7 +109,12 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
             String[] line = item.split(",");
             switch (TaskType.valueOf(line[1])) {
                 case TASK:
-                    Task task = new Task(line[2], line[3], Integer.parseInt(line[0]), Status.valueOf(line[4]));
+                    Task task = new Task(line[2],
+                            line[3],
+                            Integer.parseInt(line[0]),
+                            Status.valueOf(line[4]),
+                            Duration.parse(line[5]),
+                            Instant.parse(line[6]));
 
                     if (maxId < task.getId()) {
                         maxId = task.getId();
@@ -117,7 +124,12 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                     break;
 
                 case EPIC:
-                    Epic epic = new Epic(line[2], line[3], Integer.parseInt(line[0]), Status.valueOf(line[4]));
+                    Epic epic = new Epic(line[2],
+                            line[3],
+                            Integer.parseInt(line[0]),
+                            Status.valueOf(line[4]),
+                            Duration.parse(line[5]),
+                            Instant.parse(line[6]));
 
                     if (maxId < epic.getId()) {
                         maxId = epic.getId();
@@ -131,7 +143,9 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                             line[3],
                             Integer.parseInt(line[0]),
                             Status.valueOf(line[4]),
-                            Integer.parseInt(line[5]));
+                            Duration.parse(line[5]),
+                            Instant.parse(line[6]),
+                            Integer.parseInt(line[7]));
 
                     if (maxId < subtask.getId()) {
                         maxId = subtask.getId();

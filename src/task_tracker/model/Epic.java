@@ -1,12 +1,15 @@
 package task_tracker.model;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 
 public class Epic extends Task {
     private final List<Integer> subtasks;
+    private Instant endTime;
 
     public Epic(String name, String description) {
-        super(name, description, 0, Status.NEW);
+        super(name, description);
         this.subtasks = new ArrayList<>();
     }
 
@@ -15,8 +18,22 @@ public class Epic extends Task {
         this.subtasks = new ArrayList<>();
     }
 
+    public Epic(String name, String description, Integer id, Status status, Duration duration, Instant startTime) {
+        super(name, description, id, status, duration, startTime);
+        this.subtasks = new ArrayList<>();
+    }
+
     public List<Integer> getSubtasks() {
         return subtasks;
+    }
+
+    @Override
+    public Instant getEndTime() {
+        return endTime;
+    }
+
+    public void setEndTime(Instant endTime) {
+        this.endTime = endTime;
     }
 
     public boolean addSubtask(Integer id) {
@@ -81,10 +98,12 @@ public class Epic extends Task {
     @Override
     public String toSaveString() {
 
-        return String.valueOf(getId()) + ',' +
+        return String.valueOf(id) + ',' +
                 TaskType.EPIC + ',' +
-                getName() + ',' +
-                getDescription() + ',' +
-                getStatus();
+                name + ',' +
+                description + ',' +
+                status + ',' +
+                duration + ',' +
+                startTime;
     }
 }

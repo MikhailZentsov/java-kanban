@@ -2,6 +2,9 @@ package task_tracker.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -105,7 +108,9 @@ class TaskTest {
         assertEquals(
                 task.toString(),
                 task.getClass().getName() +
-                        "{ID='1', name='name_task', description='description_task', status='NEW'}",
+                        "{ID='1', name='name_task', description='description_task', status='NEW', " +
+                        "duration='" + Duration.ZERO + "', " +
+                        "startTime='" + Instant.MIN + "'}",
                 "toString() не совпадает");
     }
 
@@ -115,7 +120,7 @@ class TaskTest {
 
         assertEquals(
                 task.toSaveString(),
-                "1,TASK,name_task,description_task,NEW",
+                "1,TASK,name_task,description_task,NEW,PT0S,-1000000000-01-01T00:00:00Z",
                 "toSaveString() не совпадает");
     }
 }

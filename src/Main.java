@@ -1,5 +1,5 @@
-import task_tracker.manager.FileBackendTaskManager;
 import task_tracker.manager.Managers;
+import task_tracker.manager.TaskManager;
 
 import java.nio.file.Paths;
 
@@ -7,8 +7,7 @@ public class Main {
 
     public static void main(String[] args) {
         String path = "resources/save.csv";
-        Managers managers = new Managers(Paths.get(path));
-        FileBackendTaskManager taskManager = (FileBackendTaskManager) managers.getManager();
+        TaskManager taskManager = Managers.getManager();
 
         System.out.println("Вас приветствует программа \"Трекер задач\"");
 
@@ -32,15 +31,15 @@ public class Main {
                     break;
 
                 case (4):
-
+                    System.out.println("Метод отключен");
                     break;
 
                 case (5):
-
+                    System.out.println("Метод отключен");
                     break;
 
                 case (6):
-
+                    System.out.println("Метод отключен");
                     break;
 
                 case (7):

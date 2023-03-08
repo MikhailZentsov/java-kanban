@@ -1,5 +1,5 @@
 import org.jetbrains.annotations.NotNull;
-import task_tracker.manager.InMemoryTaskManager;
+import task_tracker.manager.TaskManager;
 import task_tracker.model.Epic;
 import task_tracker.model.Status;
 import task_tracker.model.Subtask;
@@ -37,7 +37,7 @@ public class ConsoleUtil {
         return userInput;
     }
 
-    public static void createTasks(@NotNull InMemoryTaskManager taskManager) {
+    public static void createTasks(@NotNull TaskManager taskManager) {
         Epic epic1 = new Epic(
                 "Переезд",
                 "Переезд в другую квартиру",
@@ -108,19 +108,19 @@ public class ConsoleUtil {
         System.out.println("Задачи загружены в систему.");
     }
 
-    public static void showAllTasks(@NotNull InMemoryTaskManager taskManager) {
+    public static void showAllTasks(@NotNull TaskManager taskManager) {
         for (Task task : taskManager.getAllTasks()) {
             System.out.println(task.toString());
         }
     }
 
-    public static void showHistory(@NotNull InMemoryTaskManager taskManager) {
+    public static void showHistory(@NotNull TaskManager taskManager) {
         for (Task task: taskManager.getHistory()) {
             System.out.println(task.toString());
         }
     }
 
-    public static void showTask(InMemoryTaskManager taskManager) {
+    public static void showTask(TaskManager taskManager) {
         int taskId = -1;
 
         System.out.print("Введите ID задачи: ");
@@ -140,7 +140,7 @@ public class ConsoleUtil {
         }
     }
 
-    public static void deleteTasks(InMemoryTaskManager taskManager) {
+    public static void deleteTasks(TaskManager taskManager) {
         int taskId = -1;
 
         System.out.print("Введите ID задачи: ");

@@ -2,6 +2,8 @@ package task_tracker.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -144,7 +146,9 @@ class EpicTest {
         assertEquals(
                 epic.toString(),
                 epic.getClass().getName() +
-                        "{ID='1', name='name_epic', description='description_epic', status='NEW', subtasksID=[Empty]}",
+                        "{ID='1', name='name_epic', description='description_epic', status='NEW', " +
+                        "duration='" + Duration.ZERO + "', " +
+                        "startTime='" + Instant.MIN + "', subtasksID=[Empty]}",
                 "toString() не совпадает с необходимым");
 
         Subtask subtask = new Subtask(
@@ -159,7 +163,9 @@ class EpicTest {
         assertEquals(
                 epic.toString(),
                 epic.getClass().getName() +
-                        "{ID='1', name='name_epic', description='description_epic', status='NEW', subtasksID=[2]}",
+                        "{ID='1', name='name_epic', description='description_epic', status='NEW', " +
+                        "duration='" + Duration.ZERO + "', " +
+                        "startTime='" + Instant.MIN + "', subtasksID=[2]}",
                 "toString() не совпадает");
     }
 
@@ -169,7 +175,7 @@ class EpicTest {
 
         assertEquals(
                 epic.toSaveString(),
-                "1,EPIC,name_epic,description_epic,NEW",
+                "1,EPIC,name_epic,description_epic,NEW,PT0S,-1000000000-01-01T00:00:00Z",
                 "toSaveString() не совпадает");
     }
 }

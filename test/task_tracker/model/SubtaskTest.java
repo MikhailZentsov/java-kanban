@@ -2,6 +2,9 @@ package task_tracker.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
+import java.time.Instant;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class SubtaskTest {
@@ -61,7 +64,10 @@ class SubtaskTest {
         assertEquals(
                 subtask1.toString(),
                 subtask1.getClass().getName() +
-                        "{ID='2', name='name_subtask1', description='description_subtask1', status='NEW', parentEpicID='1'}",
+                        "{ID='2', name='name_subtask1', " +
+                        "description='description_subtask1', " +
+                        "status='NEW', duration='" + Duration.ZERO + "', " +
+                        "startTime='" + Instant.MIN + "', parentEpicID='1'}",
                 "toString() не совпадает");
     }
 
@@ -71,7 +77,7 @@ class SubtaskTest {
 
         assertEquals(
                 subtask1.toSaveString(),
-                "2,SUBTASK,name_subtask1,description_subtask1,NEW,1",
+                "2,SUBTASK,name_subtask1,description_subtask1,NEW,PT0S,-1000000000-01-01T00:00:00Z,1",
                 "toSaveString() не совпадает");
     }
 }

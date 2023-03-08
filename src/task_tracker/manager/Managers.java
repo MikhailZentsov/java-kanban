@@ -3,17 +3,12 @@ package task_tracker.manager;
 import java.nio.file.Path;
 
 public class Managers {
-    private final TaskManager manager;
 
-    public Managers() {
-        manager = new InMemoryTaskManager();
+    public static TaskManager getManager() {
+        return new InMemoryTaskManager();
     }
 
-    public Managers(Path path) {
-        manager = FileBackendTaskManager.load(path);
-    }
-
-    public TaskManager getManager() {
-        return manager;
+    public static TaskManager getManagers(Path path) {
+        return FileBackendTaskManager.load(path);
     }
 }

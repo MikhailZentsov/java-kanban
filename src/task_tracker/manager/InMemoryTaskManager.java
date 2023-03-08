@@ -2,6 +2,8 @@ package task_tracker.manager;
 
 import task_tracker.model.*;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -70,6 +72,8 @@ public class InMemoryTaskManager implements TaskManager {
         if (task != null) {
             task.setId(id);
             task.setStatus(Status.NEW);
+            if (task.getDuration() == null ) { task.setDuration(Duration.ZERO); }
+            if (task.getStartTime() == null) { task.setStartTime(Instant.MIN); }
             tasks.put(id, task);
             id++;
 
@@ -83,9 +87,10 @@ public class InMemoryTaskManager implements TaskManager {
     public boolean addEpic(Epic epic) {
         if (epic != null) {
             epic.setId(id);
-
             epic.setStatus(Status.NEW);
             epic.removeAllSubtasks();
+            epic.setDuration(Duration.ZERO);
+            if (epic.getStartTime() == null) { epic.setStartTime(Instant.MIN); }
             epics.put(id, epic);
             id++;
 
@@ -103,11 +108,15 @@ public class InMemoryTaskManager implements TaskManager {
 
                 subtask.setId(id);
                 subtask.setStatus(Status.NEW);
+                if (subtask.getDuration() == null ) { subtask.setDuration(Duration.ZERO); }
+                if (subtask.getStartTime() == null) { subtask.setStartTime(Instant.MIN); }
                 subtasks.put(id, subtask);
                 parentEpic.addSubtask(id);
                 id++;
 
                 setEpicStatus(parentEpic);
+                setEpicDuration(parentEpic);
+                setEpicTime(parentEpic);
 
                 return true;
             }
@@ -158,12 +167,16 @@ public class InMemoryTaskManager implements TaskManager {
             subtaskForUpdate.setStatus(subtask.getStatus());
 
             setEpicStatus(oldParentEpic);
+            setEpicDuration(oldParentEpic);
+            setEpicTime(oldParentEpic);
 
             if (!oldParentEpic.equals(newParentEpic)) {
                 subtaskForUpdate.setParentEpicId(subtask.getParentEpicId());
                 oldParentEpic.removeSubtask(subtask.getId());
                 newParentEpic.addSubtask(subtask.getId());
                 setEpicStatus(newParentEpic);
+                setEpicDuration(newParentEpic);
+                setEpicTime(newParentEpic);
             }
 
             return true;
@@ -183,15 +196,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public List<Subtask> getEpicSubtasks(int id) {
-        List<Subtask> list = new ArrayList<>();
-
         if (epics.containsKey(id)) {
-            list = epics.get(id).getSubtasks().stream()
+            return epics.get(id).getSubtasks().stream()
                     .map(subtasks::get)
                     .collect(Collectors.toList());
         }
 
-        return list;
+        return new ArrayList<>();
     }
 
     @Override
@@ -233,6 +244,8 @@ public class InMemoryTaskManager implements TaskManager {
 
             parentEpic.removeSubtask(id);
             setEpicStatus(parentEpic);
+            setEpicDuration(parentEpic);
+            setEpicTime(parentEpic);
             subtasks.remove(id);
             historyManager.remove(id);
 
@@ -246,6 +259,7 @@ public class InMemoryTaskManager implements TaskManager {
         Status status = Status.IN_PROGRESS;
         boolean isAllDone = true;
         boolean isAllNew = true;
+
         List<Status> list = epic.getSubtasks().stream()
                 .map(subtasks::get)
                 .map(Task::getStatus)
@@ -272,5 +286,24 @@ public class InMemoryTaskManager implements TaskManager {
         }
 
         epic.setStatus(status);
+    }
+
+    private void setEpicDuration(Epic epic) {
+        epic.setDuration(epic.getSubtasks().stream()
+                .map(subtasks::get)
+                .map(Task::getDuration)
+                .reduce(Duration.ZERO, Duration::plus));
+    }
+
+    private void setEpicTime(Epic epic) {
+        epic.setStartTime(epic.getSubtasks().stream()
+                .map(subtasks::get)
+                .map(Task::getStartTime)
+                .reduce(Instant.MIN, (a, b) -> (a.isAfter(b))?a:b));
+
+        epic.setEndTime(epic.getSubtasks().stream()
+                .map(subtasks::get)
+                .map(Task::getEndTime)
+                .reduce(Instant.MIN, (a, b) -> (a.isBefore(b))?a:b));
     }
 }

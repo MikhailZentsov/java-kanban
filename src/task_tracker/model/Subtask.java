@@ -1,17 +1,30 @@
 package task_tracker.model;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Objects;
 
 public class Subtask extends Task {
     private int parentEpicId;
 
     public Subtask(String name, String description, int parentEpicId) {
-        super(name, description, 0, Status.NEW);
+        super(name, description);
         this.parentEpicId = parentEpicId;
     }
 
     public Subtask(String name, String description, Integer id, Status status, int parentEpicId) {
         super(name, description, id, status);
+        this.parentEpicId = parentEpicId;
+    }
+
+    public Subtask(String name,
+                   String description,
+                   Integer id,
+                   Status status,
+                   Duration duration,
+                   Instant startTime,
+                   int parentEpicId) {
+        super(name, description, id, status, duration, startTime);
         this.parentEpicId = parentEpicId;
     }
 
@@ -53,11 +66,13 @@ public class Subtask extends Task {
     @Override
     public String toSaveString() {
 
-        return String.valueOf(getId()) + ',' +
+        return String.valueOf(id) + ',' +
                 TaskType.SUBTASK + ',' +
-                getName() + ',' +
-                getDescription() + ',' +
-                getStatus() + ',' +
+                name + ',' +
+                description + ',' +
+                status + ',' +
+                duration + ',' +
+                startTime + ',' +
                 parentEpicId;
     }
 }

@@ -132,8 +132,11 @@ public class InMemoryHistoryManager implements HistoryManager {
                 x.prev = null;
                 x = next;
             }
+
             first = last = null;
             size = 0;
+
+            map.clear();
         }
 
         private static class Node<T> {
