@@ -478,4 +478,39 @@ class InMemoryTaskManagerTest {
         assertArrayEquals(taskManager.getPrioritizedTasks().toArray(), list.toArray(),
                 "getPrioritizedTasks() работает не корректно");
     }
+
+    @Test
+    void testSetEpicDurationTime() {
+        taskManager = new InMemoryTaskManager();
+        Epic epic = new Epic("name.epic", "description.epic", 1, Status.NEW);
+        Subtask subtask1 = new Subtask(
+                "name.subtask1",
+                "description.subtask1",
+                1,
+                Status.NEW,
+                Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 2),
+                Instant.ofEpochSecond(1678136400),
+                1);
+        Subtask subtask2 = new Subtask(
+                "name.subtask2",
+                "description.subtask2",
+                1,
+                Status.NEW,
+                Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 3),
+                Instant.ofEpochSecond(1678309200),
+                1);
+
+        taskManager.addEpic(epic);
+        taskManager.addSubtask(subtask1);
+        taskManager.addSubtask(subtask2);
+
+        assertEquals(taskManager.getAnyTask(1).getStartTime(), Instant.ofEpochSecond(1678136400),
+                "Начальное время рассчитывается некорректно");
+        assertEquals(taskManager.getAnyTask(1).getEndTime(),
+                Instant.ofEpochSecond(1678309200).plus(Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 3)),
+                "Конечное время рассчитывается некорректно");
+        assertEquals(taskManager.getAnyTask(1).getDuration(),
+                Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 5),
+                "Длительность рассчитывается некорректно");
+    }
 }

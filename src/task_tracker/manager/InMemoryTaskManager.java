@@ -364,12 +364,12 @@ public class InMemoryTaskManager implements TaskManager {
         epic.setStartTime(epic.getSubtasks().stream()
                 .map(subtasks::get)
                 .map(Task::getStartTime)
-                .reduce(Instant.MIN, (a, b) -> (a.isAfter(b)) ? a : b));
+                .reduce(Instant.MAX, (a, b) -> (a.isBefore(b)) ? a : b));
 
         epic.setEndTime(epic.getSubtasks().stream()
                 .map(subtasks::get)
                 .map(Task::getEndTime)
-                .reduce(Instant.MIN, (a, b) -> (a.isBefore(b)) ? a : b));
+                .reduce(Instant.MIN, (a, b) -> (a.isAfter(b)) ? a : b));
     }
 
     private void normalizeDuration(Task task) {
