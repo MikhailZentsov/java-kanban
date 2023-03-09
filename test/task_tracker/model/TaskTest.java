@@ -104,13 +104,16 @@ class TaskTest {
     @Test
     void testToString() {
         Task task = new Task("name_task", "description_task", 1, Status.NEW);
+        task.setDuration(Duration.ofMinutes(15));
 
         assertEquals(
                 task.toString(),
                 task.getClass().getName() +
                         "{ID='1', name='name_task', description='description_task', status='NEW', " +
-                        "duration='" + Duration.ZERO + "', " +
-                        "startTime='" + Instant.MIN + "'}",
+                        "duration='" + Duration.ofMinutes(15) + "', " +
+                        "startTime='" + Instant.MIN + "', " +
+                        "endTime='" + Instant.MIN.plus(Duration.ofMinutes(15)) +
+                        "'}",
                 "toString() не совпадает");
     }
 

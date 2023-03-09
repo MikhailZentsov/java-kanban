@@ -148,7 +148,9 @@ class EpicTest {
                 epic.getClass().getName() +
                         "{ID='1', name='name_epic', description='description_epic', status='NEW', " +
                         "duration='" + Duration.ZERO + "', " +
-                        "startTime='" + Instant.MIN + "', subtasksID=[Empty]}",
+                        "startTime='" + Instant.MIN + "', " +
+                        "endTime='" + Instant.MIN +
+                        "', subtasksID=[Empty]}",
                 "toString() не совпадает с необходимым");
 
         Subtask subtask = new Subtask(
@@ -165,7 +167,9 @@ class EpicTest {
                 epic.getClass().getName() +
                         "{ID='1', name='name_epic', description='description_epic', status='NEW', " +
                         "duration='" + Duration.ZERO + "', " +
-                        "startTime='" + Instant.MIN + "', subtasksID=[2]}",
+                        "startTime='" + Instant.MIN + "', " +
+                        "endTime='" + Instant.MIN +
+                        "', subtasksID=[2]}",
                 "toString() не совпадает");
     }
 

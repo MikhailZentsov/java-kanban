@@ -60,14 +60,17 @@ class SubtaskTest {
     @Test
     void testToString() {
         Subtask subtask1 = new Subtask("name_subtask1", "description_subtask1", 2, Status.NEW, 1);
+        subtask1.setDuration(Duration.ofMinutes(15));
 
         assertEquals(
                 subtask1.toString(),
                 subtask1.getClass().getName() +
                         "{ID='2', name='name_subtask1', " +
                         "description='description_subtask1', " +
-                        "status='NEW', duration='" + Duration.ZERO + "', " +
-                        "startTime='" + Instant.MIN + "', parentEpicID='1'}",
+                        "status='NEW', duration='" + Duration.ofMinutes(15) + "', " +
+                        "startTime='" + Instant.MIN + "', " +
+                        "endTime='" + Instant.MIN.plus(Duration.ofMinutes(15)) +
+                        "', parentEpicID='1'}",
                 "toString() не совпадает");
     }
 

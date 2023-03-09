@@ -388,17 +388,17 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     private void addToPlanningPeriod(Task task) {
-        for (Instant time = task.getStartTime();
+        for (Instant time = Instant.from(task.getStartTime());
              time.isBefore(task.getEndTime());
-             time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {
+             time = time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {
             planningPeriod.put(time, true);
         }
     }
 
     private void removeFromPlanningPeriod(Task task) {
-        for (Instant time = task.getStartTime();
+        for (Instant time = Instant.from(task.getStartTime());
              time.isBefore(task.getEndTime());
-             time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {
+             time = time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {
             planningPeriod.remove(time);
         }
     }
@@ -406,7 +406,7 @@ public class InMemoryTaskManager implements TaskManager {
     private boolean isBusyPlanningPeriod(Task task) {
         for (Instant time = task.getStartTime();
              time.isBefore(task.getEndTime());
-             time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {
+             time = time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {
             if (planningPeriod.containsKey(time)) return true;
         }
 

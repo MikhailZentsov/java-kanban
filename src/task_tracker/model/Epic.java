@@ -11,16 +11,19 @@ public class Epic extends Task {
     public Epic(String name, String description) {
         super(name, description);
         this.subtasks = new ArrayList<>();
+        this.endTime = this.startTime;
     }
 
     public Epic(String name, String description, Integer id, Status status) {
         super(name, description, id, status);
         this.subtasks = new ArrayList<>();
+        this.endTime = this.startTime;
     }
 
     public Epic(String name, String description, Integer id, Status status, Duration duration, Instant startTime) {
         super(name, description, id, status, duration, startTime);
         this.subtasks = new ArrayList<>();
+        this.endTime = this.startTime;
     }
 
     public List<Integer> getSubtasks() {

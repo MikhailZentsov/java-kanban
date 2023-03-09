@@ -7,6 +7,8 @@ import task_tracker.model.Status;
 import task_tracker.model.Subtask;
 import task_tracker.model.Task;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -439,5 +441,41 @@ class InMemoryTaskManagerTest {
                 epic.getStatus(),
                 Status.NEW,
                 "После удаления всех подзадач статус эпика отличен от NEW");
+    }
+
+    @Test
+    void testGetPrioritizedTasks() {
+        taskManager = new InMemoryTaskManager();
+
+        Task task1 = new Task("name.task1",
+                "description.task1",
+                1,
+                Status.NEW,
+                Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 2),
+                Instant.ofEpochSecond(1678136400)); // Mon Mar 06 2023 21:00:00 GMT+0000
+        Task task2 = new Task("name.task2",
+                "description.task2",
+                1,
+                Status.NEW,
+                Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 2),
+                Instant.ofEpochSecond(1678309200)); // Wed Mar 08 2023 21:00:00 GMT+0000
+        Task task3 = new Task("name.task3",
+                "description.task3",
+                1,
+                Status.NEW,
+                Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 2),
+                Instant.ofEpochSecond(1678222800)); // Tue Mar 07 2023 21:00:00 GMT+0000
+
+        taskManager.addTask(task1);
+        taskManager.addTask(task2);
+        taskManager.addTask(task3);
+
+        List<Task> list = new ArrayList<>();
+        list.add(task1);
+        list.add(task3);
+        list.add(task2);
+
+        assertArrayEquals(taskManager.getPrioritizedTasks().toArray(), list.toArray(),
+                "getPrioritizedTasks() работает не корректно");
     }
 }

@@ -107,6 +107,7 @@ public class Task {
                 ", status='" + status + '\'' +
                 ", duration='" + duration + '\'' +
                 ", startTime='" + startTime + '\'' +
+                ", endTime='" + getEndTime() + '\'' +
                 '}';
     }
 
