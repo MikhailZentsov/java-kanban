@@ -80,7 +80,7 @@ class SubtaskTest {
 
         assertEquals(
                 subtask1.toSaveString(),
-                "2,SUBTASK,name_subtask1,description_subtask1,NEW,PT0S,-1000000000-01-01T00:00:00Z,1",
+                "2,SUBTASK,name_subtask1,description_subtask1,NEW,0,-31557014167219200,1",
                 "toSaveString() не совпадает");
     }
 }

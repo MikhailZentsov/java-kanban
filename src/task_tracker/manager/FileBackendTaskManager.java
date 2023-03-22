@@ -1,8 +1,8 @@
 package task_tracker.manager;
 
 import org.jetbrains.annotations.NotNull;
-import task_tracker.manager.exeption.ManagerLoadException;
-import task_tracker.manager.exeption.ManagerSaveException;
+import task_tracker.exeption.ManagerLoadException;
+import task_tracker.exeption.ManagerSaveException;
 import task_tracker.model.*;
 
 import java.io.*;
@@ -16,13 +16,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class FileBackendTaskManager extends InMemoryTaskManager {
-    Path path;
-
+    private final Path path;
+    public FileBackendTaskManager() { this.path = null; }
     public FileBackendTaskManager(@NotNull Path path) {
         this.path = path;
     }
 
-    private void save() {
+    protected void save() {
         if (!Files.exists(path)) {
             try {
                 Files.createFile(path);
@@ -36,11 +36,11 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
             bw.write("id,type,name,description,status,duration,start_time,parent_epic_id");
 
-            if (!getAllTasks().isEmpty()) {
+            if (!getTasks().isEmpty()) {
 
                 bw.newLine();
 
-                for (Task task : getAllTasks()) {
+                for (Task task : getTasks()) {
                     bw.write(task.toSaveString());
                     bw.newLine();
                 }
@@ -58,7 +58,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         }
     }
 
-    public static FileBackendTaskManager load(Path path) {
+    public static TaskManager load(Path path) {
         FileBackendTaskManager manager = new FileBackendTaskManager(path);
 
         if (Files.exists(path)) {
@@ -102,7 +102,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         return manager;
     }
 
-    private static void createTasks(List<String> list, FileBackendTaskManager manager) {
+    protected static void createTasks(List<String> list, FileBackendTaskManager manager) {
         int maxId = 1;
 
         for (String item : list) {
@@ -113,14 +113,16 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                             line[3],
                             Integer.parseInt(line[0]),
                             Status.valueOf(line[4]),
-                            Duration.parse(line[5]),
-                            Instant.parse(line[6]));
+                            Duration.ofMinutes(Long.parseLong(line[5])),
+                            Instant.ofEpochSecond(Long.parseLong(line[6])));
 
                     if (maxId < task.getId()) {
                         maxId = task.getId();
                     }
 
                     manager.tasks.put(task.getId(), task);
+                    manager.tasksTree.add(task);
+                    manager.addToPlanningPeriod(task);
                     break;
 
                 case EPIC:
@@ -128,14 +130,15 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                             line[3],
                             Integer.parseInt(line[0]),
                             Status.valueOf(line[4]),
-                            Duration.parse(line[5]),
-                            Instant.parse(line[6]));
+                            Duration.ofMinutes(Long.parseLong(line[5])),
+                            Instant.ofEpochSecond(Long.parseLong(line[6])));
 
                     if (maxId < epic.getId()) {
                         maxId = epic.getId();
                     }
 
                     manager.epics.put(epic.getId(), epic);
+                    manager.addToPlanningPeriod(epic);
                     break;
 
                 case SUBTASK:
@@ -143,8 +146,8 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
                             line[3],
                             Integer.parseInt(line[0]),
                             Status.valueOf(line[4]),
-                            Duration.parse(line[5]),
-                            Instant.parse(line[6]),
+                            Duration.ofMinutes(Long.parseLong(line[5])),
+                            Instant.ofEpochSecond(Long.parseLong(line[6])),
                             Integer.parseInt(line[7]));
 
                     if (maxId < subtask.getId()) {
@@ -153,6 +156,8 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
 
                     manager.subtasks.put(subtask.getId(), subtask);
                     manager.epics.get(subtask.getParentEpicId()).addSubtask(subtask.getId());
+                    manager.tasksTree.add(subtask);
+                    manager.addToPlanningPeriod(subtask);
                     break;
                 default:
                     throw new IllegalStateException("Unexpected value: " + line[1]);
@@ -163,14 +168,14 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void deleteAllTasks() {
-        super.deleteAllTasks();
+    public void deleteTasks() {
+        super.deleteTasks();
         save();
     }
 
     @Override
-    public Task getAnyTask(int id) {
-        Task result = super.getAnyTask(id);
+    public Task getTask(int id) {
+        Task result = super.getTask(id);
         save();
 
         return result;
@@ -232,7 +237,7 @@ public class FileBackendTaskManager extends InMemoryTaskManager {
         return result;
     }
 
-    private Task getAnyTaskWithoutSave(int id) {
-        return super.getAnyTask(id);
+    Task getAnyTaskWithoutSave(int id) {
+        return super.getTask(id);
     }
 }

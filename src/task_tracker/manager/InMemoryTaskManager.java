@@ -22,14 +22,12 @@ public class InMemoryTaskManager implements TaskManager {
         this.epics = new HashMap<>();
         this.subtasks = new HashMap<>();
         this.tasks = new HashMap<>();
-        this.historyManager = new InMemoryHistoryManager();
+        this.historyManager = Managers.getHistoryManager();
         this.tasksTree = new TreeSet<>((a, b) -> {
-            if (a.getStartTime().isAfter(b.getStartTime())) {
-                return 1;
-            } else if (a.getStartTime().isBefore(b.getStartTime())) {
-                return -1;
+            if (!a.getStartTime().equals(Instant.MIN) && !b.getStartTime().equals(Instant.MIN)) {
+                return a.getStartTime().compareTo(b.getStartTime());
             } else {
-                return 0;
+                return a.getId().compareTo(b.getId());
             }
         });
         this.planningPeriod = new HashMap<>();
@@ -42,7 +40,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public List<Task> getAllTasks() {
+    public List<Task> getTasks() {
         List<Task> list = new ArrayList<>();
         list.addAll(tasks.values());
         list.addAll(epics.values());
@@ -52,7 +50,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public void deleteAllTasks() {
+    public void deleteTasks() {
         tasks.clear();
         epics.clear();
         subtasks.clear();
@@ -62,7 +60,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     @Override
-    public Task getAnyTask(int id) {
+    public Task getTask(int id) {
         if (tasks.containsKey(id)) {
             historyManager.add(tasks.get(id));
 
@@ -78,7 +76,6 @@ public class InMemoryTaskManager implements TaskManager {
         if (subtasks.containsKey(id)) {
             historyManager.add(subtasks.get(id));
 
-
             return subtasks.get(id);
         }
 
@@ -87,7 +84,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean addTask(Task task) {
-        if (task != null) {
+        if (task != null && !tasks.containsKey(task.getId())) {
             task.setId(id);
             task.setStatus(Status.NEW);
             if (task.getDuration() == null) {
@@ -116,7 +113,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean addEpic(Epic epic) {
-        if (epic != null) {
+        if (epic != null && !epics.containsKey(epic.getId())) {
             epic.setId(id);
             epic.setStatus(Status.NEW);
             epic.removeAllSubtasks();
@@ -136,7 +133,7 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public boolean addSubtask(Subtask subtask) {
-        if (subtask != null) {
+        if (subtask != null && !subtasks.containsKey(subtask.getId())) {
             if (epics.containsKey(subtask.getParentEpicId())) {
                 Epic parentEpic = epics.get(subtask.getParentEpicId());
 
@@ -241,9 +238,11 @@ public class InMemoryTaskManager implements TaskManager {
         if (deleteTask(id)) {
             return true;
         }
+
         if (deleteSubtask(id)) {
             return true;
         }
+
         if (deleteEpic(id)) {
             return true;
         }
@@ -387,7 +386,7 @@ public class InMemoryTaskManager implements TaskManager {
         task.setStartTime(task.getStartTime().minus(delta));
     }
 
-    private void addToPlanningPeriod(Task task) {
+    protected void addToPlanningPeriod(Task task) {
         for (Instant time = Instant.from(task.getStartTime());
              time.isBefore(task.getEndTime());
              time = time.plus(Duration.ofMinutes(PLANNING_PERIOD_MINUTES))) {

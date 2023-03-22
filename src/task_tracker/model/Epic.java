@@ -106,7 +106,7 @@ public class Epic extends Task {
                 name + ',' +
                 description + ',' +
                 status + ',' +
-                duration + ',' +
-                startTime;
+                duration.toMinutes() + ',' +
+                startTime.getEpochSecond();
     }
 }

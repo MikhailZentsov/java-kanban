@@ -8,9 +8,9 @@ import java.util.List;
 
 public interface TaskManager {
     List<Task> getPrioritizedTasks();
-    List<Task> getAllTasks();
-    void deleteAllTasks();
-    Task getAnyTask(int id);
+    List<Task> getTasks();
+    void deleteTasks();
+    Task getTask(int id);
     boolean addTask(Task task);
     boolean addEpic(Epic task);
     boolean addSubtask(Subtask task);

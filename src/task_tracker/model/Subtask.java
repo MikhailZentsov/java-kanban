@@ -71,8 +71,8 @@ public class Subtask extends Task {
                 name + ',' +
                 description + ',' +
                 status + ',' +
-                duration + ',' +
-                startTime + ',' +
+                duration.toMinutes() + ',' +
+                startTime.getEpochSecond() + ',' +
                 parentEpicId;
     }
 }

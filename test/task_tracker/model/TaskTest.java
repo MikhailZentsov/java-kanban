@@ -123,7 +123,7 @@ class TaskTest {
 
         assertEquals(
                 task.toSaveString(),
-                "1,TASK,name_task,description_task,NEW,PT0S,-1000000000-01-01T00:00:00Z",
+                "1,TASK,name_task,description_task,NEW,0,-31557014167219200",
                 "toSaveString() не совпадает");
     }
 }

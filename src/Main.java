@@ -1,62 +1,30 @@
+import task_tracker.manager.HttpTaskManager;
 import task_tracker.manager.Managers;
-import task_tracker.manager.TaskManager;
+import task_tracker.server.HttpTaskServer;
+import task_tracker.server.KVServer;
 
-import java.nio.file.Paths;
+import java.io.IOException;
+import java.net.URL;
+import java.util.Scanner;
 
 public class Main {
+    private static final String hostname = "localhost";
 
-    public static void main(String[] args) {
-        String path = "resources/save.csv";
-        TaskManager taskManager = Managers.getManager();
-
+    public static void main(String[] args) throws IOException {
         System.out.println("Вас приветствует программа \"Трекер задач\"");
 
-        while (true) {
+        KVServer kvServer = new KVServer(hostname, 8085);
+        kvServer.start();
 
-            switch (ConsoleUtil.chooseMenu()) {
-                case(0):
-                    System.out.println("Программа завершила свою работу.");
-                    return;
+        HttpTaskManager taskManager = (HttpTaskManager) Managers.getManager(new URL("http://" + hostname + 8085));
 
-                case (1):
-                    ConsoleUtil.createTasks(taskManager);
-                    break;
+        HttpTaskServer taskServer = new HttpTaskServer(taskManager, hostname, 8081);
+        taskServer.start();
 
-                case (2):
-                    ConsoleUtil.showAllTasks(taskManager);
-                    break;
-
-                case (3):
-                    System.out.println("Метод отключен");
-                    break;
-
-                case (4):
-                    System.out.println("Метод отключен");
-                    break;
-
-                case (5):
-                    System.out.println("Метод отключен");
-                    break;
-
-                case (6):
-                    System.out.println("Метод отключен");
-                    break;
-
-                case (7):
-                    ConsoleUtil.showHistory(taskManager);
-                    break;
-
-                case (8):
-                    ConsoleUtil.showTask(taskManager);
-                    break;
-
-                case (9):
-                    ConsoleUtil.deleteTasks(taskManager);
-                    break;
-
-                default:
-                    System.out.println("Такой команды не существует.");
-            }
+        System.out.println("Для завершения нажмите 0");
+        if (new Scanner(System.in).nextInt() == 0) {
+            kvServer.stop(0);
+            taskServer.stop(0);
         }
     }
 }

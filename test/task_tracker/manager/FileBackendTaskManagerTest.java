@@ -2,8 +2,8 @@ package task_tracker.manager;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import task_tracker.manager.exeption.ManagerLoadException;
-import task_tracker.manager.exeption.ManagerSaveException;
+import task_tracker.exeption.ManagerLoadException;
+import task_tracker.exeption.ManagerSaveException;
 import task_tracker.model.Epic;
 import task_tracker.model.Status;
 import task_tracker.model.Subtask;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
     private final Path path = Path.of("resources/test/check-methods.csv");
-    private static FileBackendTaskManager manager;
+    private static TaskManager manager;
 
     @BeforeEach
     public void beforeEach(){
@@ -49,14 +49,14 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
         assertEquals(ex.getMessage(), "Файл пуст",
                 "Отсутствие ошибки при пустом файле");
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -65,7 +65,7 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void testDeleteAllTasks() {
-        manager.deleteAllTasks();
+        manager.deleteTasks();
 
         int counter = 0;
 
@@ -84,18 +84,18 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
     @Test
     void testGetAnyTask() {
-        manager.getAnyTask(1);
+        manager.getTask(1);
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {4, 2, 1};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -110,15 +110,15 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "5,TASK,Просто задача,Описание просто задачи,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "5,TASK,Просто задача,Описание просто задачи,NEW,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -133,15 +133,15 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "5,EPIC,Просто задача,Описание просто задачи,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,NEW,0,-31557014167219200",
+                "5,EPIC,Просто задача,Описание просто задачи,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -156,15 +156,15 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "5,SUBTASK,Просто задача,Описание просто задачи,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2",
+                "5,SUBTASK,Просто задача,Описание просто задачи,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -179,14 +179,14 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Просто задача,Описание просто задачи,IN_PROGRESS,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Просто задача,Описание просто задачи,IN_PROGRESS,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -201,14 +201,14 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Просто задача,Описание просто задачи,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "2,EPIC,Просто задача,Описание просто задачи,NEW,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Подзадача2,Просто подзадача2,NEW,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -223,14 +223,14 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z",
-                "2,EPIC,Важный эпик,Очень важный,IN_PROGRESS,PT0S,-1000000000-01-01T00:00:00Z",
-                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,PT0S,-1000000000-01-01T00:00:00Z,2",
-                "4,SUBTASK,Просто задача,Описание просто задачи,IN_PROGRESS,PT0S,-1000000000-01-01T00:00:00Z,2"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200",
+                "2,EPIC,Важный эпик,Очень важный,IN_PROGRESS,0,-31557014167219200",
+                "3,SUBTASK,Подзадача1,Просто подзадача1,NEW,0,-31557014167219200,2",
+                "4,SUBTASK,Просто задача,Описание просто задачи,IN_PROGRESS,0,-31557014167219200,2"};
 
         Integer[] history = {1, 4, 2};
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -240,7 +240,7 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
 
         manager.updateSubtask(task1);
 
-        assertArrayEquals(manager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(manager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(manager.getHistory().stream().map(Task::getId).toArray(), history,
@@ -250,17 +250,17 @@ class FileBackendTaskManagerTest extends InMemoryTaskManagerTest {
     @Test
     void testDeleteAnyTask() {
         fillFile();
-        FileBackendTaskManager manager = FileBackendTaskManager.load(path);
+        TaskManager manager = FileBackendTaskManager.load(path);
 
         manager.deleteAnyTask(2);
 
-        FileBackendTaskManager newManager = FileBackendTaskManager.load(path);
+        TaskManager newManager = FileBackendTaskManager.load(path);
 
-        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,PT0S,-1000000000-01-01T00:00:00Z"};
+        String[] checkData = {"1,TASK,Обычная задача,Простая задача,NEW,0,-31557014167219200"};
 
         Integer[] history = {1};
 
-        assertArrayEquals(newManager.getAllTasks().stream().map(Task::toSaveString).toArray(),
+        assertArrayEquals(newManager.getTasks().stream().map(Task::toSaveString).toArray(),
                 checkData,
                 "Данные задач загрузки не совпадают");
         assertArrayEquals(newManager.getHistory().stream().map(Task::getId).toArray(), history,

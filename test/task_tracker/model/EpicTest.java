@@ -179,7 +179,7 @@ class EpicTest {
 
         assertEquals(
                 epic.toSaveString(),
-                "1,EPIC,name_epic,description_epic,NEW,PT0S,-1000000000-01-01T00:00:00Z",
+                "1,EPIC,name_epic,description_epic,NEW,0,-31557014167219200",
                 "toSaveString() не совпадает");
     }
 }

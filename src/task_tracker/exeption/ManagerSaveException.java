@@ -1,4 +1,4 @@
-package task_tracker.manager.exeption;
+package task_tracker.exeption;
 
 public class ManagerSaveException extends RuntimeException {
     public ManagerSaveException(final String message) {

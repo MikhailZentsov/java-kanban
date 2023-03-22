@@ -118,7 +118,7 @@ public class Task {
                 name + ',' +
                 description + ',' +
                 status + ',' +
-                duration + ',' +
-                startTime;
+                duration.toMinutes() + ',' +
+                startTime.getEpochSecond();
     }
 }

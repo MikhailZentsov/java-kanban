@@ -40,7 +40,7 @@ class InMemoryTaskManagerTest {
                 1);
         Task task = new Task("name_task", "description_task", 4, Status.NEW);
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), new Task[0],
+        assertArrayEquals(taskManager.getTasks().toArray(), new Task[0],
                 "Некорректный пустой список");
 
         taskManager.epics.put(1, epic);
@@ -52,18 +52,18 @@ class InMemoryTaskManagerTest {
         list.add(epic);
         list.add(subtask1);
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), list.toArray(new Task[0]),
+        assertArrayEquals(taskManager.getTasks().toArray(), list.toArray(new Task[0]),
                 "Некорректный список из 1 задачи, 1 эпика, 1 подзадачи");
 
         taskManager.subtasks.put(3, subtask2);
         list.add(subtask2);
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), list.toArray(new Task[0]),
+        assertArrayEquals(taskManager.getTasks().toArray(), list.toArray(new Task[0]),
                 "Некорректный список из 1 задачи, 1 эпика, 2 подзадач");
 
-        taskManager.deleteAllTasks();
+        taskManager.deleteTasks();
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), new Task[0],
+        assertArrayEquals(taskManager.getTasks().toArray(), new Task[0],
                 "Некорректный список после удаления всех задач");
     }
 
@@ -72,12 +72,12 @@ class InMemoryTaskManagerTest {
         taskManager = new InMemoryTaskManager();
         Epic epic = new Epic("name_epic", "description_epic", 1, Status.NEW);
 
-        assertNull(taskManager.getAnyTask(5),
+        assertNull(taskManager.getTask(5),
                 "Получение задачи не возвращает null, если нет задачи");
 
         taskManager.epics.put(1, epic);
 
-        assertEquals(taskManager.getAnyTask(1), epic,
+        assertEquals(taskManager.getTask(1), epic,
                 "Не возращает задачу, если она есть");
     }
 
@@ -90,10 +90,10 @@ class InMemoryTaskManagerTest {
                 "При добавлении null вместо задачи не возвращает false");
         assertTrue(taskManager.addTask(task),
                 "При добавлении задачи не возращает true");
-        assertEquals(taskManager.getAnyTask(1),
+        assertEquals(taskManager.getTask(1),
                 new Task("name_task", "description_task", 1, Status.NEW),
                 "После добавления задачи не корректно назначен ID");
-        assertEquals(taskManager.getAnyTask(1).getStatus(), Status.NEW,
+        assertEquals(taskManager.getTask(1).getStatus(), Status.NEW,
                 "После добавления задачи не корректно назначен статус");
     }
 
@@ -106,13 +106,13 @@ class InMemoryTaskManagerTest {
                 "При добавлении null вместо эпика не возвращает false");
         assertTrue(taskManager.addEpic(epic),
                 "При добавлении эпика не возращает true");
-        assertEquals(taskManager.getAnyTask(1),
+        assertEquals(taskManager.getTask(1),
                 new Epic("name_epic", "description_epic", 1, Status.NEW),
                 "После добавления эпика не корректно назначен ID");
-        assertArrayEquals(((Epic) taskManager.getAnyTask(1)).getSubtasks().toArray(),
+        assertArrayEquals(((Epic) taskManager.getTask(1)).getSubtasks().toArray(),
                 new Subtask[0],
                 "После добавления эпика не обнулён список подзадач");
-        assertEquals(taskManager.getAnyTask(1).getStatus(), Status.NEW,
+        assertEquals(taskManager.getTask(1).getStatus(), Status.NEW,
                 "После добавления эпика не корректно назначен статус");
     }
 
@@ -141,13 +141,13 @@ class InMemoryTaskManagerTest {
                 "При добавлении подзадачи с не существующим эпиком не возвращает false");
         assertTrue(taskManager.addSubtask(subtask1),
                 "При добавлении подзадачи не возращает true");
-        assertEquals(taskManager.getAnyTask(2),
+        assertEquals(taskManager.getTask(2),
                 new Subtask("name_subtask1", "description_subtask1", 2, Status.NEW, 1),
                 "После добавления подзадачи не корректно назначен ID");
-        assertArrayEquals(((Epic) taskManager.getAnyTask(1)).getSubtasks().toArray(),
+        assertArrayEquals(((Epic) taskManager.getTask(1)).getSubtasks().toArray(),
                 List.of(2).toArray(),
                 "После добавления подзадачи не добавлена к родительскому эпику");
-        assertEquals(taskManager.getAnyTask(2).getStatus(), Status.NEW,
+        assertEquals(taskManager.getTask(2).getStatus(), Status.NEW,
                 "После добавления эпика не корректно назначен статус");
     }
 
@@ -166,10 +166,10 @@ class InMemoryTaskManagerTest {
                 "При обновлении правильной задачи не возращает true");
         assertFalse(taskManager.updateTask(wrongTask),
                 "При обновлении задачи с ошибочным ID не возвращает false");
-        assertEquals(taskManager.getAnyTask(1),
+        assertEquals(taskManager.getTask(1),
                 new Task("name_task2", "description_task2", 1, Status.DONE),
                 "После обновления задачи не корректно обновлены поля");
-        assertEquals(taskManager.getAnyTask(1).getStatus(), Status.DONE,
+        assertEquals(taskManager.getTask(1).getStatus(), Status.DONE,
                 "После обновления задачи не корректно назначен статус");
     }
 
@@ -188,7 +188,7 @@ class InMemoryTaskManagerTest {
                 "При добавлении правильного эпика не возращает true");
         assertFalse(taskManager.updateEpic(wrongEpic),
                 "При добавлении эпика с ошибочным ID не возвращает false");
-        assertEquals(taskManager.getAnyTask(1),
+        assertEquals(taskManager.getTask(1),
                 new Epic("name_epic2", "description_epic2", 1, Status.NEW),
                 "После обновления эпика не корректно обновлены поля");
     }
@@ -241,7 +241,7 @@ class InMemoryTaskManagerTest {
                 "При добавлении подзадачи с несуществующим ID не возвращает false");
         assertFalse(taskManager.updateSubtask(moveWrongSubtask),
                 "При добавлении подзадачи с несуществующим ID родительского эпика не возвращает false");
-        assertEquals(taskManager.getAnyTask(3),
+        assertEquals(taskManager.getTask(3),
                 new Subtask("name_subtask2",
                         "description_subtask2",
                         3,
@@ -254,7 +254,7 @@ class InMemoryTaskManagerTest {
                 "При перемещении подзадачи к другому эпику из старого не удалилась");
         assertArrayEquals(epic2.getSubtasks().toArray(), List.of(3).toArray(),
                 "При перемещении подзадачи к другому эпику в новый не добавилось");
-        assertEquals(((Subtask) taskManager.getAnyTask(3)).getParentEpicId(), 2,
+        assertEquals(((Subtask) taskManager.getTask(3)).getParentEpicId(), 2,
                 "При перемещении подзадачи не изменился родительский эпик");
     }
 
@@ -281,7 +281,7 @@ class InMemoryTaskManagerTest {
 
         taskManager.deleteAnyTask(1);
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), new Task[0],
+        assertArrayEquals(taskManager.getTasks().toArray(), new Task[0],
                 "При удалении простой задачи список не пуст");
 
         taskManager = new InMemoryTaskManager();
@@ -291,7 +291,7 @@ class InMemoryTaskManagerTest {
 
         taskManager.deleteAnyTask(2);
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), List.of(epic).toArray(),
+        assertArrayEquals(taskManager.getTasks().toArray(), List.of(epic).toArray(),
                 "При удалении подзадачи список отличается");
 
         taskManager.addSubtask(subtask);
@@ -299,7 +299,7 @@ class InMemoryTaskManagerTest {
 
         taskManager.deleteAnyTask(1);
 
-        assertArrayEquals(taskManager.getAllTasks().toArray(), new Task[0],
+        assertArrayEquals(taskManager.getTasks().toArray(), new Task[0],
                 "При удалении подзадачи не были удалены эпик и подзадачи");
     }
 
@@ -354,8 +354,8 @@ class InMemoryTaskManagerTest {
         assertArrayEquals(taskManager.getHistory().toArray(), new Task[0],
                 "Ошибка при получении пустой истории");
 
-        taskManager.getAnyTask(1);
-        taskManager.getAnyTask(2);
+        taskManager.getTask(1);
+        taskManager.getTask(2);
 
         List<Task> list = new ArrayList<>();
         list.add(epic);
@@ -455,25 +455,28 @@ class InMemoryTaskManagerTest {
                 Instant.ofEpochSecond(1678136400)); // Mon Mar 06 2023 21:00:00 GMT+0000
         Task task2 = new Task("name.task2",
                 "description.task2",
-                1,
+                2,
                 Status.NEW,
                 Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 2),
                 Instant.ofEpochSecond(1678309200)); // Wed Mar 08 2023 21:00:00 GMT+0000
         Task task3 = new Task("name.task3",
                 "description.task3",
-                1,
+                3,
                 Status.NEW,
                 Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 2),
                 Instant.ofEpochSecond(1678222800)); // Tue Mar 07 2023 21:00:00 GMT+0000
+        Task task4 = new Task("name.task4", "description.task4", 4, Status.NEW);
 
         taskManager.addTask(task1);
         taskManager.addTask(task2);
         taskManager.addTask(task3);
+        taskManager.addTask(task4);
 
         List<Task> list = new ArrayList<>();
         list.add(task1);
         list.add(task3);
         list.add(task2);
+        list.add(task4);
 
         assertArrayEquals(taskManager.getPrioritizedTasks().toArray(), list.toArray(),
                 "getPrioritizedTasks() работает не корректно");
@@ -504,12 +507,12 @@ class InMemoryTaskManagerTest {
         taskManager.addSubtask(subtask1);
         taskManager.addSubtask(subtask2);
 
-        assertEquals(taskManager.getAnyTask(1).getStartTime(), Instant.ofEpochSecond(1678136400),
+        assertEquals(taskManager.getTask(1).getStartTime(), Instant.ofEpochSecond(1678136400),
                 "Начальное время рассчитывается некорректно");
-        assertEquals(taskManager.getAnyTask(1).getEndTime(),
+        assertEquals(taskManager.getTask(1).getEndTime(),
                 Instant.ofEpochSecond(1678309200).plus(Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 3)),
                 "Конечное время рассчитывается некорректно");
-        assertEquals(taskManager.getAnyTask(1).getDuration(),
+        assertEquals(taskManager.getTask(1).getDuration(),
                 Duration.ofMinutes(taskManager.PLANNING_PERIOD_MINUTES * 5),
                 "Длительность рассчитывается некорректно");
     }
