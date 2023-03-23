@@ -32,7 +32,7 @@ class HttpTaskManagerTest {
     static void beforeAll() throws IOException {
         kvServer = new KVServer("localhost", 8085);
         kvServer.start();
-        manager = (HttpTaskManager) Managers.getManager(new URL("http://localhost:8085"));
+        manager = (HttpTaskManager) Managers.getDefault(new URL("http://localhost:8085"));
         taskServer = new HttpTaskServer(manager, "localhost", 8081);
         taskServer.start();
         task1 = new Task(
@@ -40,14 +40,14 @@ class HttpTaskManagerTest {
                 "description.task1",
                 1,
                 Status.NEW,
-                Duration.ofMinutes(manager.PLANNING_PERIOD_MINUTES * 2),
+                Duration.ofMinutes(InMemoryTaskManager.PLANNING_PERIOD_MINUTES * 2),
                 Instant.ofEpochSecond(1678136400));
         task2 = new Task(
                 "name.task2",
                 "description.task2",
                 2,
                 Status.NEW,
-                Duration.ofMinutes(manager.PLANNING_PERIOD_MINUTES * 2),
+                Duration.ofMinutes(InMemoryTaskManager.PLANNING_PERIOD_MINUTES * 2),
                 Instant.ofEpochSecond(1678309200));
         epic1 = new Epic("name.epic1", "description.epic1", 3, Status.NEW);
         epic2 = new Epic("name.epic2", "description.epic2", 4, Status.NEW);
@@ -56,7 +56,7 @@ class HttpTaskManagerTest {
                 "description.subtask1",
                 5,
                 Status.NEW,
-                Duration.ofMinutes(manager.PLANNING_PERIOD_MINUTES),
+                Duration.ofMinutes(InMemoryTaskManager.PLANNING_PERIOD_MINUTES),
                 Instant.ofEpochSecond(1679136400),
                 3);
         subtask2 = new Subtask(
@@ -64,7 +64,7 @@ class HttpTaskManagerTest {
                 "description.subtask1",
                 6,
                 Status.NEW,
-                Duration.ofMinutes(manager.PLANNING_PERIOD_MINUTES),
+                Duration.ofMinutes(InMemoryTaskManager.PLANNING_PERIOD_MINUTES),
                 Instant.ofEpochSecond(1689136400),
                 3);
     }
@@ -90,7 +90,7 @@ class HttpTaskManagerTest {
         manager.getTask(3);
         List<Task> historyList = new ArrayList<>(manager.getHistory());
 
-        manager = (HttpTaskManager) Managers.getManager(new URL("http://localhost:8085"));
+        manager = (HttpTaskManager) Managers.getDefault(new URL("http://localhost:8085"));
 
         List<Task> taskList = new ArrayList<>();
         taskList.add(task1);

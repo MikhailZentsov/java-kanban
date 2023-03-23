@@ -13,12 +13,12 @@ public class Main {
     public static void main(String[] args) throws IOException {
         System.out.println("Вас приветствует программа \"Трекер задач\"");
 
-        KVServer kvServer = new KVServer(hostname, 8085);
+        KVServer kvServer = Managers.getDefaultKVServer(hostname, 8085);
         kvServer.start();
 
-        HttpTaskManager taskManager = (HttpTaskManager) Managers.getManager(new URL("http://" + hostname + 8085));
+        HttpTaskManager taskManager = (HttpTaskManager) Managers.getDefault(new URL("http://" + hostname + 8085));
 
-        HttpTaskServer taskServer = new HttpTaskServer(taskManager, hostname, 8081);
+        HttpTaskServer taskServer = Managers.getDefaultHttpTaskServer(taskManager, hostname, 8081);
         taskServer.start();
 
         System.out.println("Для завершения нажмите 0");

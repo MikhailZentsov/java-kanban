@@ -44,7 +44,7 @@ class HttpTaskServerTest {
     static void beforeAll() throws IOException {
         kvServer = new KVServer("localhost", 8084);
         kvServer.start();
-        manager = (HttpTaskManager) Managers.getManager(new URL("http://localhost:8084"));
+        manager = (HttpTaskManager) Managers.getDefault(new URL("http://localhost:8084"));
         taskServer = new HttpTaskServer(manager, "localhost", 8082);
         taskServer.start();
         client = HttpClient.newHttpClient();

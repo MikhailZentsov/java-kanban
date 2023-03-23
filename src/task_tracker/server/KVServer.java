@@ -91,7 +91,6 @@ public class KVServer {
 			if ("GET".equals(h.getRequestMethod())) {
 				sendText(h, apiToken);
 			} else {
-				System.out.println("/register ждёт GET-запрос, а получил " + h.getRequestMethod());
 				h.sendResponseHeaders(405, 0);
 			}
 		} finally {

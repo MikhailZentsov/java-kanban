@@ -29,7 +29,7 @@ public class KVTaskClient {
 
             final HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
             if (response.statusCode() != 200) {
-                throw new ManagerExchangeException("Не удалось сохранить данные");
+                throw new ManagerExchangeException("Не удалось сохранить данные. Ошибка " + response.statusCode());
             }
         } catch (NullPointerException | IOException | InterruptedException | IllegalArgumentException e) {
             throw new ManagerExchangeException(e.getMessage());
@@ -47,9 +47,9 @@ public class KVTaskClient {
             if (response.statusCode() == 200) {
                 return response.body();
             } else if (response.statusCode() == 400) {
-                return null;
+                return "";
             } else {
-                throw new ManagerExchangeException("Не удалось получить данные");
+                throw new ManagerExchangeException("Не удалось получить данные. Ошибка " + response.statusCode());
             }
         } catch (NullPointerException | IOException | InterruptedException e) {
             throw new ManagerExchangeException(e.getMessage());
@@ -67,7 +67,7 @@ public class KVTaskClient {
             if (response.statusCode() == 200) {
                 return response.body();
             } else {
-                throw new ManagerExchangeException("Не удалось получить API_KEY");
+                throw new ManagerExchangeException("Не удалось получить API_KEY. Ошибка " + response.statusCode());
             }
         } catch (NullPointerException | IOException | InterruptedException e) {
             throw new ManagerExchangeException(e.getMessage());
