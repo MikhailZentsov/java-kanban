@@ -15,8 +15,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HistoryManager historyManager;
     protected final Set<Task> tasksTree;
     protected final Map<Instant, Boolean> planningPeriod;
-    protected final int PLANNING_PERIOD_MINUTES = 15;
-    protected final int SECOND_IN_MINUTES = 60;
+    public static final int PLANNING_PERIOD_MINUTES = 15;
+    public static final int SECOND_IN_MINUTES = 60;
 
     public InMemoryTaskManager() {
         this.epics = new HashMap<>();
@@ -26,8 +26,12 @@ public class InMemoryTaskManager implements TaskManager {
         this.tasksTree = new TreeSet<>((a, b) -> {
             if (!a.getStartTime().equals(Instant.MIN) && !b.getStartTime().equals(Instant.MIN)) {
                 return a.getStartTime().compareTo(b.getStartTime());
-            } else {
+            } else if (a.getStartTime().equals(Instant.MIN) && b.getStartTime().equals(Instant.MIN)) {
                 return a.getId().compareTo(b.getId());
+            } else if (a.getStartTime().equals(Instant.MIN)) {
+                return 1;
+            } else {
+                return -1;
             }
         });
         this.planningPeriod = new HashMap<>();
@@ -57,6 +61,7 @@ public class InMemoryTaskManager implements TaskManager {
         tasksTree.clear();
         planningPeriod.clear();
         historyManager.clear();
+        id = 1;
     }
 
     @Override

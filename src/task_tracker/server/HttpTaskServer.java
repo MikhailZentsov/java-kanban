@@ -160,7 +160,7 @@ public class HttpTaskServer implements HttpHandler {
                 writeResponse(exchange, "Задача успешно создана", 201);
             } else {
                 writeResponse(exchange, "Невозможно добавить задачу. " +
-                        "Задача с таким ID уже есть. Используйте PUT", 409);
+                        "Задача с таким ID уже есть. Используйте PUT для обновления", 409);
             }
         } catch (JsonSyntaxException | IOException e) {
             writeResponse(exchange, "Некорректное содержимое тела запроса", 400);
@@ -173,7 +173,8 @@ public class HttpTaskServer implements HttpHandler {
             if (manager.addEpic(task)) {
                 writeResponse(exchange, "Эпик успешно создан", 201);
             } else {
-                writeResponse(exchange, "Невозможно добавить эпик", 409);
+                writeResponse(exchange, "Невозможно добавить эпик. " +
+                        "Эпик с таким ID уже есть. Используйте PUT для обновления", 409);
             }
         } catch (JsonSyntaxException | IOException e) {
             writeResponse(exchange, "Некорректное содержимое тела запроса", 400);
@@ -186,7 +187,8 @@ public class HttpTaskServer implements HttpHandler {
             if (manager.addSubtask(task)) {
                 writeResponse(exchange, "Подзачада успешно создана", 201);
             } else {
-                writeResponse(exchange, "Невозможно добавить подзадачу", 409);
+                writeResponse(exchange, "Невозможно добавить подзадачу. " +
+                        "Подзадача с таким ID уже есть. Используйте PUT для обновления", 409);
             }
         } catch (JsonSyntaxException | IOException e) {
             writeResponse(exchange, "Некорректное содержимое тела запроса", 400);
@@ -235,7 +237,7 @@ public class HttpTaskServer implements HttpHandler {
     private Endpoint getEndpoint(HttpExchange exchange) {
         String requestMethod = exchange.getRequestMethod();
         String[] pathParts = exchange.getRequestURI().getPath().split("/");
-        Map<String, String> params;
+        Map<String, String> params = splitQuery(exchange.getRequestURI());
 
         if (pathParts.length >= 2) {
             if (!pathParts[1].equals("tasks")) {
@@ -250,6 +252,31 @@ public class HttpTaskServer implements HttpHandler {
         }
 
         if (pathParts.length == 3) {
+            if (params.containsKey("id")) {
+                if (pathParts[2].equals("task")) {
+                    switch (requestMethod){
+                        case "GET":
+                            return Endpoint.GET_TASK_BY_ID;
+                        case "DELETE":
+                            return Endpoint.DELETE_TASK_BY_ID;
+                        case "PUT":
+                            return Endpoint.PUT_TASK;
+                    }
+                }
+
+                if (pathParts[2].equals("subtask")) {
+                    if (requestMethod.equals("PUT")) {
+                        return Endpoint.PUT_SUBTASK;
+                    }
+                }
+
+                if (pathParts[2].equals("epic")) {
+                    if (requestMethod.equals("PUT")) {
+                        return Endpoint.PUT_EPIC;
+                    }
+                }
+            }
+
             if (pathParts[2].equals("task")) {
                 if (requestMethod.equals("GET")) {
                     return Endpoint.GET_TASKS;
@@ -284,29 +311,12 @@ public class HttpTaskServer implements HttpHandler {
         }
 
         if (pathParts.length == 4) {
-            params = splitQuery(exchange.getRequestURI());
-
             if (params.containsKey("id")) {
-                if (pathParts[2].equals("task")) {
-                    switch (requestMethod){
-                        case "GET":
-                            return Endpoint.GET_TASK_BY_ID;
-                        case "DELETE":
-                            return Endpoint.DELETE_TASK_BY_ID;
-                        case "PUT":
-                            return Endpoint.PUT_TASK;
-                    }
-                }
-
-                if (pathParts[2].equals("subtask")) {
-                    if (requestMethod.equals("PUT")) {
-                        return Endpoint.PUT_SUBTASK;
-                    }
-                }
-
-                if (pathParts[2].equals("epic")) {
-                    if (requestMethod.equals("PUT")) {
-                        return Endpoint.PUT_EPIC;
+                if (pathParts[2].equals("subtasks")) {
+                    if (pathParts[3].equals("epic")) {
+                        if (requestMethod.equals("GET")) {
+                            return Endpoint.GET_EPIC_SUBTASKS;
+                        }
                     }
                 }
             }
@@ -318,13 +328,17 @@ public class HttpTaskServer implements HttpHandler {
     private static Map<String, String> splitQuery(URI uri) {
         Map<String, String> query_pairs = new HashMap<>();
         String query = uri.getQuery();
-        String[] pairs = query.split("&");
 
-        for (String pair : pairs) {
-            int index = pair.indexOf("=");
-            query_pairs.put(
-                    URLDecoder.decode(pair.substring(0, index), StandardCharsets.UTF_8),
-                    URLDecoder.decode(pair.substring(index + 1),StandardCharsets.UTF_8));
+        if (query != null) {
+            String[] pairs = query.split("&");
+
+
+            for (String pair : pairs) {
+                int index = pair.indexOf("=");
+                query_pairs.put(
+                        URLDecoder.decode(pair.substring(0, index), StandardCharsets.UTF_8),
+                        URLDecoder.decode(pair.substring(index + 1), StandardCharsets.UTF_8));
+            }
         }
 
         return query_pairs;
@@ -344,7 +358,7 @@ public class HttpTaskServer implements HttpHandler {
                                int responseCode) {
         try {
             if (responseString == null || responseString.isBlank()) {
-                exchange.sendResponseHeaders(responseCode, 0);
+                exchange.sendResponseHeaders(404, 0);
             } else {
                 byte[] bytes = responseString.getBytes(StandardCharsets.UTF_8);
                 exchange.sendResponseHeaders(responseCode, bytes.length);
